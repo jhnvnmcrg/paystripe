@@ -76,6 +76,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-event-client": "0.5.0",
     "@tanstack/devtools-vite": "0.8.5",
+    "@tanstack/intent": "^0.5.5",
     "@tanstack/router-cli": "^1.132.0",
     "@types/node": "^22.10.2",
     "@types/pg": "^8.15.6",
