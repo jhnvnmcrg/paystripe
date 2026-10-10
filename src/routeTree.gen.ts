@@ -26,6 +26,7 @@ import { Route as DemoStoreRouteImport } from './routes/demo/store'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as StripeIndexRouteImport } from './routes/stripe/index'
+import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 import { Route as DemoApiMcpTodosRouteImport } from './routes/demo/api.mcp-todos'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
@@ -123,6 +124,11 @@ const StripeIndexRoute = StripeIndexRouteImport.update({
   path: '/stripe/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
+  id: '/api/stripe/webhook',
+  path: '/api/stripe/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoApiMcpTodosRoute = DemoApiMcpTodosRouteImport.update({
   id: '/demo/api/mcp-todos',
   path: '/demo/api/mcp-todos',
@@ -197,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/stripe/': typeof StripeIndexRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/demo/api/mcp-todos': typeof DemoApiMcpTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
@@ -227,6 +234,7 @@ export interface FileRoutesByTo {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/stripe': typeof StripeIndexRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/demo/api/mcp-todos': typeof DemoApiMcpTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
@@ -258,6 +266,7 @@ export interface FileRoutesById {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/stripe/': typeof StripeIndexRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/demo/api/mcp-todos': typeof DemoApiMcpTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
@@ -290,6 +299,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/stripe/'
+    | '/api/stripe/webhook'
     | '/demo/api/mcp-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
@@ -320,6 +330,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/stripe'
+    | '/api/stripe/webhook'
     | '/demo/api/mcp-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
@@ -350,6 +361,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/stripe/'
+    | '/api/stripe/webhook'
     | '/demo/api/mcp-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
@@ -381,6 +393,7 @@ export interface RootRouteChildren {
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   StripeIndexRoute: typeof StripeIndexRoute
+  ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   DemoApiMcpTodosRoute: typeof DemoApiMcpTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
@@ -515,6 +528,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StripeIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/stripe/webhook': {
+      id: '/api/stripe/webhook'
+      path: '/api/stripe/webhook'
+      fullPath: '/api/stripe/webhook'
+      preLoaderRoute: typeof ApiStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/api/mcp-todos': {
       id: '/demo/api/mcp-todos'
       path: '/demo/api/mcp-todos'
@@ -613,6 +633,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   StripeIndexRoute: StripeIndexRoute,
+  ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   DemoApiMcpTodosRoute: DemoApiMcpTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
   DemoFormSimpleRoute: DemoFormSimpleRoute,

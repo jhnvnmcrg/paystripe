@@ -18,6 +18,10 @@
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
+    "db:pay:generate": "drizzle-kit generate --config drizzle.pay.config.ts",
+    "db:pay:migrate": "drizzle-kit migrate --config drizzle.pay.config.ts",
+    "stripe:listen": "stripe listen --latest --all-snapshot --forward-to localhost:3000/api/stripe/webhook",
+    "stripe:seed": "dotenv -e .env.local -- tsx scripts/stripe-seed.ts",
     "start": "node .output/server/index.mjs"
   },
   "dependencies": {
@@ -64,6 +68,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "streamdown": "^2.3.0",
+    "stripe": "^23.0.0",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.1.18",
     "tw-animate-css": "^1.3.6",
