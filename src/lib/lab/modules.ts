@@ -2,15 +2,31 @@ import type { FileRouteTypes } from '#/routeTree.gen'
 
 export type LabModuleStatus = 'ready' | 'next' | 'planned'
 
+export type LabModuleSlug =
+  | 'license-keys'
+  | 'downloads'
+  | 'shop'
+  | 'saas'
+  | 'web-tools'
+  | 'freemium'
+  | 'membership'
+  | 'usage'
+  | 'credits'
+  | 'marketplace'
+
 export interface LabModule {
   step: number
-  slug: string
+  slug: LabModuleSlug
   name: string
   moneyFlow: string
   examples: string
   status: LabModuleStatus
   /** Set once the module's page exists. */
   to?: FileRouteTypes['to']
+}
+
+export function isLabModuleSlug(value: string): value is LabModuleSlug {
+  return labModules.some((module) => module.slug === value)
 }
 
 /** The selling types in build order. Update `status` and `to` as each one ships. */

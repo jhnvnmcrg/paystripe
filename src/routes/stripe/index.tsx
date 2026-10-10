@@ -1,15 +1,32 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { useState } from 'react'
 import FlowNotes from '#/components/stripe/FlowNotes'
+import SetupChecklist from '#/components/stripe/SetupChecklist'
 import { Badge } from '#/components/ui/badge'
 import type { LabModule } from '#/lib/lab/modules'
 import { labModules } from '#/lib/lab/modules'
+import { getLabSetup } from '#/lib/lab/setup.functions'
 
 export const Route = createFileRoute('/stripe/')({
   head: () => ({ meta: [{ title: 'Selling types | Stripe Lab' }] }),
+  loader: () => getLabSetup(),
   component: LabHub,
 })
 
 function LabHub() {
+  const setup = Route.useLoaderData()
+  const router = useRouter()
+  const [refreshing, setRefreshing] = useState(false)
+
+  async function refreshSetup() {
+    setRefreshing(true)
+    try {
+      await router.invalidate({ sync: true })
+    } finally {
+      setRefreshing(false)
+    }
+  }
+
   return (
     <main className="page-wrap px-4 pb-16 pt-12 sm:pt-16">
       <header className="max-w-2xl">
@@ -33,44 +50,50 @@ function LabHub() {
           </ol>
         </section>
 
-        <FlowNotes
-          className="lg:sticky lg:top-24"
-          title="How every demo works"
-          description="The same five steps sit underneath all ten selling types."
-          steps={[
-            'You sign in, and the server finds or creates your Stripe customer.',
-            "The server creates a Checkout Session and sends you to Stripe's payment page.",
-            'You pay with a test card. Stripe sends you back, but nothing is granted yet.',
-            'Stripe sends a signed webhook event to the server, which verifies it.',
-            'The server grants what you bought and the page updates.',
-          ]}
-          objects={[
-            { name: 'Customer', id: 'cus_…' },
-            { name: 'Checkout Session', id: 'cs_test_…' },
-            { name: 'Payment Intent', id: 'pi_…' },
-            { name: 'Event', id: 'evt_…' },
-          ]}
-          events={[
-            {
-              type: 'checkout.session.completed',
-              note: 'Checkout finished. The server checks the payment status before granting anything.',
-            },
-            {
-              type: 'checkout.session.async_payment_succeeded',
-              note: 'A delayed payment method, such as a bank debit, has cleared.',
-            },
-          ]}
-          testCards={[
-            { number: '4242 4242 4242 4242', note: 'Succeeds' },
-            { number: '4000 0000 0000 0002', note: 'Declined' },
-            { number: '4000 0025 0000 3155', note: 'Asks for 3D Secure' },
-          ]}
-          production={[
-            'Replace the sandbox key with a live restricted key.',
-            'Register the webhook endpoint in the Stripe Dashboard instead of using the CLI listener.',
-            'Turn on Stripe Tax once you have a tax registration.',
-          ]}
-        />
+        <div className="flex flex-col gap-6">
+          <SetupChecklist
+            status={setup}
+            onRefresh={refreshSetup}
+            refreshing={refreshing}
+          />
+          <FlowNotes
+            title="How every demo works"
+            description="The same five steps sit underneath all ten selling types."
+            steps={[
+              'You sign in, and the server finds or creates your Stripe customer.',
+              "The server creates a Checkout Session and sends you to Stripe's payment page.",
+              'You pay with a test card. Stripe sends you back, but nothing is granted yet.',
+              'Stripe sends a signed webhook event to the server, which verifies it.',
+              'The server grants what you bought and the page updates.',
+            ]}
+            objects={[
+              { name: 'Customer', id: 'cus_…' },
+              { name: 'Checkout Session', id: 'cs_test_…' },
+              { name: 'Payment Intent', id: 'pi_…' },
+              { name: 'Event', id: 'evt_…' },
+            ]}
+            events={[
+              {
+                type: 'checkout.session.completed',
+                note: 'Checkout finished. The server checks the payment status before granting anything.',
+              },
+              {
+                type: 'checkout.session.async_payment_succeeded',
+                note: 'A delayed payment method, such as a bank debit, has cleared.',
+              },
+            ]}
+            testCards={[
+              { number: '4242 4242 4242 4242', note: 'Succeeds' },
+              { number: '4000 0000 0000 0002', note: 'Declined' },
+              { number: '4000 0025 0000 3155', note: 'Asks for 3D Secure' },
+            ]}
+            production={[
+              'Replace the sandbox key with a live restricted key.',
+              'Register the webhook endpoint in the Stripe Dashboard instead of using the CLI listener.',
+              'Turn on Stripe Tax once you have a tax registration.',
+            ]}
+          />
+        </div>
       </div>
     </main>
   )
