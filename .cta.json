@@ -1,0 +1,38 @@
+{
+  "projectName": "paystripe",
+  "mode": "file-router",
+  "typescript": true,
+  "packageManager": "npm",
+  "includeExamples": true,
+  "tailwind": true,
+  "projectPreset": "default",
+  "addOnOptions": {
+    "drizzle": {
+      "database": "postgresql"
+    }
+  },
+  "git": true,
+  "install": true,
+  "intent": true,
+  "routerOnly": false,
+  "version": 1,
+  "framework": "react",
+  "chosenAddOns": [
+    "biome",
+    "vercel",
+    "clerk",
+    "ai",
+    "compiler",
+    "db",
+    "drizzle",
+    "form",
+    "mcp",
+    "shadcn",
+    "table",
+    "store",
+    "tanstack-query",
+    "neon",
+    "posthog",
+    "sentry"
+  ]
+}
