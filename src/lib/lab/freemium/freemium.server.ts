@@ -4,7 +4,12 @@ import { db } from '#/db/index'
 import type { PaySubscription } from '#/db/pay-schema'
 import { payFreemiumProjects } from '#/db/pay-schema'
 import { getStripe } from '#/lib/stripe/client.server'
-import { accessFor, getCurrentSubscription, syncSubscription } from '#/lib/stripe/subscriptions.server'
+import {
+  accessFor,
+  discardPendingUpdate,
+  getCurrentSubscription,
+  syncSubscription,
+} from '#/lib/stripe/subscriptions.server'
 import type { AddonKey } from './catalog'
 import {
   addonForLookupKey,
@@ -251,6 +256,7 @@ export async function applyAddonChange(
   })
 
   if (updated.pending_update) {
+    await discardPendingUpdate(updated)
     throw new Error("Your card was declined, so the add-on wasn't changed.")
   }
 

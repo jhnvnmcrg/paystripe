@@ -150,6 +150,18 @@ export function subscriptionIdOfInvoice(invoice: Stripe.Invoice): string | null 
   return idOf(invoice.parent?.subscription_details?.subscription)
 }
 
+/**
+ * A declined `pending_if_incomplete` change isn't gone: it stays pending for up
+ * to 23 hours and applies if its invoice is paid in that time. Voiding the
+ * invoice discards it now, so "nothing changed" stays true.
+ */
+export async function discardPendingUpdate(subscription: Stripe.Subscription): Promise<void> {
+  const invoiceId = idOf(subscription.latest_invoice)
+  if (subscription.pending_update && invoiceId) {
+    await getStripe().invoices.voidInvoice(invoiceId)
+  }
+}
+
 /** After a subscription checkout, store the new subscription straight away. */
 export async function syncCheckoutSubscription(
   tx: DbTransaction,

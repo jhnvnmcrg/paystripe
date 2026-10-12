@@ -1,6 +1,7 @@
 import { downloadWebhooks } from '#/lib/lab/downloads/webhooks.server'
 import { freemiumWebhooks } from '#/lib/lab/freemium/webhooks.server'
 import { licenseKeyWebhooks } from '#/lib/lab/license-keys/webhooks.server'
+import { membershipEventHandlers, membershipWebhooks } from '#/lib/lab/membership/webhooks.server'
 import type { LabModuleSlug } from '#/lib/lab/modules'
 import { saasWebhooks } from '#/lib/lab/saas/webhooks.server'
 import { shopWebhooks } from '#/lib/lab/shop/webhooks.server'
@@ -18,7 +19,14 @@ export const moduleHandlers: Partial<Record<LabModuleSlug, ModuleWebhookHandlers
   saas: saasWebhooks,
   'web-tools': webToolsWebhooks,
   freemium: freemiumWebhooks,
+  membership: membershipWebhooks,
 }
 
-/** Raw event handlers for modules that need events beyond Checkout and subscriptions. */
-export const extraEventHandlers: RegisteredEventHandler[] = [...webToolsEventHandlers]
+/**
+ * Raw event handlers for modules that need events beyond Checkout and subscriptions.
+ * They run after the shared handlers, so a subscription is already synced when they see it.
+ */
+export const extraEventHandlers: RegisteredEventHandler[] = [
+  ...webToolsEventHandlers,
+  ...membershipEventHandlers,
+]

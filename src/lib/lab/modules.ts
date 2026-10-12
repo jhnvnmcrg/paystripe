@@ -91,7 +91,8 @@ export const labModules: LabModule[] = [
     name: 'Memberships and patronage',
     moneyFlow: 'Supporters pick a tier or name their own monthly amount.',
     examples: 'Patreon, GitHub Sponsors, Circle',
-    status: 'next',
+    status: 'ready',
+    to: '/stripe/membership',
   },
   {
     step: 8,
@@ -99,7 +100,7 @@ export const labModules: LabModule[] = [
     name: 'Usage-based billing',
     moneyFlow: 'Usage is metered and billed at the end of each month.',
     examples: 'OpenAI, Twilio, AWS, Vercel',
-    status: 'planned',
+    status: 'next',
   },
   {
     step: 9,
