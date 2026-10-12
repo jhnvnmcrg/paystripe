@@ -5,6 +5,7 @@ import { membershipEventHandlers, membershipWebhooks } from '#/lib/lab/membershi
 import type { LabModuleSlug } from '#/lib/lab/modules'
 import { saasWebhooks } from '#/lib/lab/saas/webhooks.server'
 import { shopWebhooks } from '#/lib/lab/shop/webhooks.server'
+import { usageEventHandlers, usageWebhooks } from '#/lib/lab/usage/webhooks.server'
 import { webToolsEventHandlers, webToolsWebhooks } from '#/lib/lab/web-tools/webhooks.server'
 import type { ModuleWebhookHandlers, RegisteredEventHandler } from './types'
 
@@ -20,6 +21,7 @@ export const moduleHandlers: Partial<Record<LabModuleSlug, ModuleWebhookHandlers
   'web-tools': webToolsWebhooks,
   freemium: freemiumWebhooks,
   membership: membershipWebhooks,
+  usage: usageWebhooks,
 }
 
 /**
@@ -29,4 +31,5 @@ export const moduleHandlers: Partial<Record<LabModuleSlug, ModuleWebhookHandlers
 export const extraEventHandlers: RegisteredEventHandler[] = [
   ...webToolsEventHandlers,
   ...membershipEventHandlers,
+  ...usageEventHandlers,
 ]

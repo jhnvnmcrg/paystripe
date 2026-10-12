@@ -48,6 +48,8 @@ import { Route as StripeSaasIndexRouteImport } from './routes/stripe/saas/index'
 import { Route as StripeSaasSuccessRouteImport } from './routes/stripe/saas/success'
 import { Route as StripeShopIndexRouteImport } from './routes/stripe/shop/index'
 import { Route as StripeShopSuccessRouteImport } from './routes/stripe/shop/success'
+import { Route as StripeUsageIndexRouteImport } from './routes/stripe/usage/index'
+import { Route as StripeUsageSuccessRouteImport } from './routes/stripe/usage/success'
 import { Route as StripeWebToolsIndexRouteImport } from './routes/stripe/web-tools/index'
 import { Route as StripeWebToolsSuccessRouteImport } from './routes/stripe/web-tools/success'
 import { Route as ApiToolsV1ProjectsRouteImport } from './routes/api/tools/v1/projects'
@@ -253,6 +255,16 @@ const StripeShopSuccessRoute = StripeShopSuccessRouteImport.update({
   path: '/stripe/shop/success',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StripeUsageIndexRoute = StripeUsageIndexRouteImport.update({
+  id: '/stripe/usage/',
+  path: '/stripe/usage/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StripeUsageSuccessRoute = StripeUsageSuccessRouteImport.update({
+  id: '/stripe/usage/success',
+  path: '/stripe/usage/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StripeWebToolsIndexRoute = StripeWebToolsIndexRouteImport.update({
   id: '/stripe/web-tools/',
   path: '/stripe/web-tools/',
@@ -327,6 +339,7 @@ export interface FileRoutesByFullPath {
   '/stripe/membership/success': typeof StripeMembershipSuccessRoute
   '/stripe/saas/success': typeof StripeSaasSuccessRoute
   '/stripe/shop/success': typeof StripeShopSuccessRoute
+  '/stripe/usage/success': typeof StripeUsageSuccessRoute
   '/stripe/web-tools/success': typeof StripeWebToolsSuccessRoute
   '/demo/guitars/': typeof DemoGuitarsIndexRoute
   '/stripe/downloads/': typeof StripeDownloadsIndexRoute
@@ -335,6 +348,7 @@ export interface FileRoutesByFullPath {
   '/stripe/membership/': typeof StripeMembershipIndexRoute
   '/stripe/saas/': typeof StripeSaasIndexRoute
   '/stripe/shop/': typeof StripeShopIndexRoute
+  '/stripe/usage/': typeof StripeUsageIndexRoute
   '/stripe/web-tools/': typeof StripeWebToolsIndexRoute
   '/api/tools/v1/projects': typeof ApiToolsV1ProjectsRoute
   '/demo/api/ai/chat': typeof DemoApiAiChatRoute
@@ -376,6 +390,7 @@ export interface FileRoutesByTo {
   '/stripe/membership/success': typeof StripeMembershipSuccessRoute
   '/stripe/saas/success': typeof StripeSaasSuccessRoute
   '/stripe/shop/success': typeof StripeShopSuccessRoute
+  '/stripe/usage/success': typeof StripeUsageSuccessRoute
   '/stripe/web-tools/success': typeof StripeWebToolsSuccessRoute
   '/demo/guitars': typeof DemoGuitarsIndexRoute
   '/stripe/downloads': typeof StripeDownloadsIndexRoute
@@ -384,6 +399,7 @@ export interface FileRoutesByTo {
   '/stripe/membership': typeof StripeMembershipIndexRoute
   '/stripe/saas': typeof StripeSaasIndexRoute
   '/stripe/shop': typeof StripeShopIndexRoute
+  '/stripe/usage': typeof StripeUsageIndexRoute
   '/stripe/web-tools': typeof StripeWebToolsIndexRoute
   '/api/tools/v1/projects': typeof ApiToolsV1ProjectsRoute
   '/demo/api/ai/chat': typeof DemoApiAiChatRoute
@@ -426,6 +442,7 @@ export interface FileRoutesById {
   '/stripe/membership/success': typeof StripeMembershipSuccessRoute
   '/stripe/saas/success': typeof StripeSaasSuccessRoute
   '/stripe/shop/success': typeof StripeShopSuccessRoute
+  '/stripe/usage/success': typeof StripeUsageSuccessRoute
   '/stripe/web-tools/success': typeof StripeWebToolsSuccessRoute
   '/demo/guitars/': typeof DemoGuitarsIndexRoute
   '/stripe/downloads/': typeof StripeDownloadsIndexRoute
@@ -434,6 +451,7 @@ export interface FileRoutesById {
   '/stripe/membership/': typeof StripeMembershipIndexRoute
   '/stripe/saas/': typeof StripeSaasIndexRoute
   '/stripe/shop/': typeof StripeShopIndexRoute
+  '/stripe/usage/': typeof StripeUsageIndexRoute
   '/stripe/web-tools/': typeof StripeWebToolsIndexRoute
   '/api/tools/v1/projects': typeof ApiToolsV1ProjectsRoute
   '/demo/api/ai/chat': typeof DemoApiAiChatRoute
@@ -477,6 +495,7 @@ export interface FileRouteTypes {
     | '/stripe/membership/success'
     | '/stripe/saas/success'
     | '/stripe/shop/success'
+    | '/stripe/usage/success'
     | '/stripe/web-tools/success'
     | '/demo/guitars/'
     | '/stripe/downloads/'
@@ -485,6 +504,7 @@ export interface FileRouteTypes {
     | '/stripe/membership/'
     | '/stripe/saas/'
     | '/stripe/shop/'
+    | '/stripe/usage/'
     | '/stripe/web-tools/'
     | '/api/tools/v1/projects'
     | '/demo/api/ai/chat'
@@ -526,6 +546,7 @@ export interface FileRouteTypes {
     | '/stripe/membership/success'
     | '/stripe/saas/success'
     | '/stripe/shop/success'
+    | '/stripe/usage/success'
     | '/stripe/web-tools/success'
     | '/demo/guitars'
     | '/stripe/downloads'
@@ -534,6 +555,7 @@ export interface FileRouteTypes {
     | '/stripe/membership'
     | '/stripe/saas'
     | '/stripe/shop'
+    | '/stripe/usage'
     | '/stripe/web-tools'
     | '/api/tools/v1/projects'
     | '/demo/api/ai/chat'
@@ -575,6 +597,7 @@ export interface FileRouteTypes {
     | '/stripe/membership/success'
     | '/stripe/saas/success'
     | '/stripe/shop/success'
+    | '/stripe/usage/success'
     | '/stripe/web-tools/success'
     | '/demo/guitars/'
     | '/stripe/downloads/'
@@ -583,6 +606,7 @@ export interface FileRouteTypes {
     | '/stripe/membership/'
     | '/stripe/saas/'
     | '/stripe/shop/'
+    | '/stripe/usage/'
     | '/stripe/web-tools/'
     | '/api/tools/v1/projects'
     | '/demo/api/ai/chat'
@@ -625,6 +649,7 @@ export interface RootRouteChildren {
   StripeMembershipSuccessRoute: typeof StripeMembershipSuccessRoute
   StripeSaasSuccessRoute: typeof StripeSaasSuccessRoute
   StripeShopSuccessRoute: typeof StripeShopSuccessRoute
+  StripeUsageSuccessRoute: typeof StripeUsageSuccessRoute
   StripeWebToolsSuccessRoute: typeof StripeWebToolsSuccessRoute
   DemoGuitarsIndexRoute: typeof DemoGuitarsIndexRoute
   StripeDownloadsIndexRoute: typeof StripeDownloadsIndexRoute
@@ -633,6 +658,7 @@ export interface RootRouteChildren {
   StripeMembershipIndexRoute: typeof StripeMembershipIndexRoute
   StripeSaasIndexRoute: typeof StripeSaasIndexRoute
   StripeShopIndexRoute: typeof StripeShopIndexRoute
+  StripeUsageIndexRoute: typeof StripeUsageIndexRoute
   StripeWebToolsIndexRoute: typeof StripeWebToolsIndexRoute
   ApiToolsV1ProjectsRoute: typeof ApiToolsV1ProjectsRoute
   DemoApiAiChatRoute: typeof DemoApiAiChatRoute
@@ -917,6 +943,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StripeShopSuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stripe/usage/': {
+      id: '/stripe/usage/'
+      path: '/stripe/usage'
+      fullPath: '/stripe/usage/'
+      preLoaderRoute: typeof StripeUsageIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stripe/usage/success': {
+      id: '/stripe/usage/success'
+      path: '/stripe/usage/success'
+      fullPath: '/stripe/usage/success'
+      preLoaderRoute: typeof StripeUsageSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stripe/web-tools/': {
       id: '/stripe/web-tools/'
       path: '/stripe/web-tools'
@@ -1009,6 +1049,7 @@ const rootRouteChildren: RootRouteChildren = {
   StripeMembershipSuccessRoute: StripeMembershipSuccessRoute,
   StripeSaasSuccessRoute: StripeSaasSuccessRoute,
   StripeShopSuccessRoute: StripeShopSuccessRoute,
+  StripeUsageSuccessRoute: StripeUsageSuccessRoute,
   StripeWebToolsSuccessRoute: StripeWebToolsSuccessRoute,
   DemoGuitarsIndexRoute: DemoGuitarsIndexRoute,
   StripeDownloadsIndexRoute: StripeDownloadsIndexRoute,
@@ -1017,6 +1058,7 @@ const rootRouteChildren: RootRouteChildren = {
   StripeMembershipIndexRoute: StripeMembershipIndexRoute,
   StripeSaasIndexRoute: StripeSaasIndexRoute,
   StripeShopIndexRoute: StripeShopIndexRoute,
+  StripeUsageIndexRoute: StripeUsageIndexRoute,
   StripeWebToolsIndexRoute: StripeWebToolsIndexRoute,
   ApiToolsV1ProjectsRoute: ApiToolsV1ProjectsRoute,
   DemoApiAiChatRoute: DemoApiAiChatRoute,

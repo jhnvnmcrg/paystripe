@@ -57,6 +57,13 @@
       "when": 1791775873044,
       "tag": "0007_aromatic_demogoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791780528266,
+      "tag": "0008_puzzling_gorgon",
+      "breakpoints": true
     }
   ]
 }

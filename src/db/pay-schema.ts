@@ -420,6 +420,53 @@ export const payContributions = pgTable(
   (table) => [index('pay_contributions_user_idx').on(table.clerkUserId)],
 )
 
+/* Step 8: usage-based billing */
+
+export const usageEventStatuses = ['pending', 'sent', 'failed'] as const
+
+/**
+ * Usage the app has recorded, one row per meter event. The row's ID is sent
+ * as the event's `identifier`, so resending after a timeout can't count twice.
+ */
+export const payUsageEvents = pgTable(
+  'pay_usage_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    clerkUserId: text('clerk_user_id').notNull(),
+    stripeCustomerId: text('stripe_customer_id').notNull(),
+    /** The catalog's meter key, such as `requests`. */
+    meter: text('meter').notNull(),
+    value: integer('value').notNull(),
+    status: text('status', { enum: usageEventStatuses }).notNull().default('pending'),
+    error: text('error'),
+    /** When the usage happened. Stripe bills it into the period containing this time. */
+    occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
+    /** Set for usage sent to a time-travel customer. */
+    testClockRunId: uuid('test_clock_run_id'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    sentAt: timestamp('sent_at', { withTimezone: true }),
+  },
+  (table) => [index('pay_usage_events_customer_idx').on(table.stripeCustomerId, table.occurredAt)],
+)
+
+/** A usage alert set on Stripe, and whether it has fired. */
+export const payUsageAlerts = pgTable(
+  'pay_usage_alerts',
+  {
+    /** The Stripe alert ID (alrt_…). */
+    id: text('id').primaryKey(),
+    clerkUserId: text('clerk_user_id').notNull(),
+    stripeCustomerId: text('stripe_customer_id').notNull(),
+    meter: text('meter').notNull(),
+    threshold: integer('threshold').notNull(),
+    status: text('status').notNull(),
+    triggeredAt: timestamp('triggered_at', { withTimezone: true }),
+    triggeredValue: integer('triggered_value'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('pay_usage_alerts_user_idx').on(table.clerkUserId)],
+)
+
 /** Tracking details once a paid order has been handed to a carrier. */
 export const payShipments = pgTable('pay_shipments', {
   orderId: uuid('order_id')

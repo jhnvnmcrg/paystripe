@@ -100,7 +100,8 @@ export const labModules: LabModule[] = [
     name: 'Usage-based billing',
     moneyFlow: 'Usage is metered and billed at the end of each month.',
     examples: 'OpenAI, Twilio, AWS, Vercel',
-    status: 'next',
+    status: 'ready',
+    to: '/stripe/usage',
   },
   {
     step: 9,
@@ -108,7 +109,7 @@ export const labModules: LabModule[] = [
     name: 'Prepaid credits',
     moneyFlow: 'Credits are bought upfront and spent with each action.',
     examples: 'AI image generators, SMS senders, background jobs',
-    status: 'planned',
+    status: 'next',
   },
   {
     step: 10,
