@@ -82,7 +82,8 @@ export const labModules: LabModule[] = [
     name: 'Freemium with paid add-ons',
     moneyFlow: 'Free to start. Upgrades and add-ons bill on one subscription.',
     examples: 'GitHub, ChatGPT Plus, Spotify',
-    status: 'next',
+    status: 'ready',
+    to: '/stripe/freemium',
   },
   {
     step: 7,
@@ -90,7 +91,7 @@ export const labModules: LabModule[] = [
     name: 'Memberships and patronage',
     moneyFlow: 'Supporters pick a tier or name their own monthly amount.',
     examples: 'Patreon, GitHub Sponsors, Circle',
-    status: 'planned',
+    status: 'next',
   },
   {
     step: 8,
