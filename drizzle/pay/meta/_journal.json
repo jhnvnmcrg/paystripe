@@ -15,6 +15,13 @@
       "when": 1791766310554,
       "tag": "0001_wide_shiver_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791768356806,
+      "tag": "0002_wonderful_jigsaw",
+      "breakpoints": true
     }
   ]
 }

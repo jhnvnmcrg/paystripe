@@ -1,4 +1,5 @@
 import type { LabModuleSlug } from '../../src/lib/lab/modules.ts'
+import { seedDownloads } from './downloads.ts'
 import { seedLicenseKeys } from './license-keys.ts'
 
 export interface ModuleSeed {
@@ -7,4 +8,7 @@ export interface ModuleSeed {
 }
 
 /** Each lab step adds its catalog here, in build order. */
-export const moduleSeeds: ModuleSeed[] = [{ module: 'license-keys', run: seedLicenseKeys }]
+export const moduleSeeds: ModuleSeed[] = [
+  { module: 'license-keys', run: seedLicenseKeys },
+  { module: 'downloads', run: seedDownloads },
+]

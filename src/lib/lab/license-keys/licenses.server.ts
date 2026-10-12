@@ -160,21 +160,6 @@ export async function validateAndActivate(
   })
 }
 
-/** A license order that belongs to this user. Throws otherwise, so seller actions stay scoped. */
-export async function findOwnLicenseOrder(clerkUserId: string, orderId: string): Promise<PayOrder> {
-  const order = await db.query.payOrders.findFirst({
-    where: and(
-      eq(payOrders.id, orderId),
-      eq(payOrders.clerkUserId, clerkUserId),
-      eq(payOrders.module, 'license-keys'),
-    ),
-  })
-  if (!order) {
-    throw new Error('Order not found.')
-  }
-  return order
-}
-
 /** Frees every device slot on a key the user owns. */
 export async function clearActivations(clerkUserId: string, licenseId: string): Promise<void> {
   const license = await db.query.payLicenseKeys.findFirst({

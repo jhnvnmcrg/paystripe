@@ -4,6 +4,7 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import FlowNotes from '#/components/stripe/FlowNotes'
 import ModuleHeader from '#/components/stripe/ModuleHeader'
+import { useWebhookWait } from '#/components/stripe/useWebhookWait'
 import ActivationTester from '#/components/stripe/license-keys/ActivationTester'
 import LicenseOrders from '#/components/stripe/license-keys/LicenseOrders'
 import LicenseProducts from '#/components/stripe/license-keys/LicenseProducts'
@@ -23,7 +24,6 @@ export const Route = createFileRoute('/stripe/license-keys/')({
 })
 
 const ORDERS_KEY = ['license-orders']
-const WEBHOOK_WAIT_MS = 45_000
 
 /** A fingerprint of everything a webhook can change on an order. */
 function orderSignature(order: LicenseOrderView | undefined): string {
@@ -41,18 +41,15 @@ function LicenseKeysPage() {
   const queryClient = useQueryClient()
   const { isLoaded, isSignedIn } = useAuth()
 
-  const [awaiting, setAwaiting] = useState<{
-    orderId: string
-    signature: string
-    until: number
-  } | null>(null)
-
+  const [polling, setPolling] = useState(false)
   const { data: orders } = useQuery({
     queryKey: ORDERS_KEY,
     queryFn: () => getLicenseOrders(),
     initialData: store.orders,
-    refetchInterval: awaiting ? 1500 : false,
+    refetchInterval: polling ? 1500 : false,
   })
+  const { awaitingId, waitFor } = useWebhookWait(orders, orderSignature)
+  useEffect(() => setPolling(awaitingId !== null), [awaitingId])
 
   // The loader reruns after sign-in or sign-out; keep the orders list in step with it.
   useEffect(() => {
@@ -64,22 +61,6 @@ function LicenseKeysPage() {
       router.invalidate()
     }
   }, [isLoaded, isSignedIn, store.signedIn, router])
-
-  // Stop waiting once the webhook has changed the order, or after a while.
-  useEffect(() => {
-    if (!awaiting) {
-      return
-    }
-    const order = orders.find((candidate) => candidate.id === awaiting.orderId)
-    if (orderSignature(order) !== awaiting.signature || Date.now() > awaiting.until) {
-      setAwaiting(null)
-    }
-  }, [orders, awaiting])
-
-  function waitForWebhook(orderId: string) {
-    const order = orders.find((candidate) => candidate.id === orderId)
-    setAwaiting({ orderId, signature: orderSignature(order), until: Date.now() + WEBHOOK_WAIT_MS })
-  }
 
   function refreshOrders() {
     queryClient.invalidateQueries({ queryKey: ORDERS_KEY })
@@ -113,8 +94,8 @@ function LicenseKeysPage() {
             <>
               <LicenseOrders
                 orders={orders}
-                awaitingOrderId={awaiting?.orderId ?? null}
-                onAction={waitForWebhook}
+                awaitingOrderId={awaitingId}
+                onAction={waitFor}
                 onDevicesCleared={refreshOrders}
               />
               <ActivationTester knownKeys={knownKeys} onRequestDone={refreshOrders} />

@@ -46,7 +46,8 @@ export const labModules: LabModule[] = [
     name: 'Digital downloads',
     moneyFlow: 'A cart is paid once. Buyers get expiring download links.',
     examples: 'UI kits, design templates, PDF guides',
-    status: 'next',
+    status: 'ready',
+    to: '/stripe/downloads',
   },
   {
     step: 3,
@@ -54,7 +55,7 @@ export const labModules: LabModule[] = [
     name: 'Physical goods with inventory',
     moneyFlow: 'Stock is held during checkout, then the order ships.',
     examples: 'Merch stores, small product shops',
-    status: 'planned',
+    status: 'next',
   },
   {
     step: 4,

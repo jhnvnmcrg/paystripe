@@ -1,0 +1,41 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 794 >>
+stream
+BT /F1 20 Tf 72 720 Td (Pricing Page Guide) Tj ET
+BT /F1 11 Tf 72 690 Td (A Stripe Lab sample download) Tj ET
+BT /F1 11 Tf 72 669 Td () Tj ET
+BT /F1 11 Tf 72 648 Td (One-time: charge once, deliver a key or a file. Simple, but no recurring revenue.) Tj ET
+BT /F1 11 Tf 72 627 Td (Subscription: bill monthly or yearly for ongoing access. Plan for upgrades,) Tj ET
+BT /F1 11 Tf 72 606 Td (downgrades, failed renewals and cancellations.) Tj ET
+BT /F1 11 Tf 72 585 Td (Usage-based: meter what customers consume and bill at the end of each period.) Tj ET
+BT /F1 11 Tf 72 564 Td (Prepaid credits: sell units upfront and deduct them as customers act.) Tj ET
+BT /F1 11 Tf 72 543 Td () Tj ET
+BT /F1 11 Tf 72 522 Td (Whichever you choose, grant access from the webhook, never from the success page.) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001086 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1156
+%%EOF
