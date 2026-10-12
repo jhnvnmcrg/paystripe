@@ -109,7 +109,8 @@ export const labModules: LabModule[] = [
     name: 'Prepaid credits',
     moneyFlow: 'Credits are bought upfront and spent with each action.',
     examples: 'AI image generators, SMS senders, background jobs',
-    status: 'next',
+    status: 'ready',
+    to: '/stripe/credits',
   },
   {
     step: 10,
@@ -117,6 +118,6 @@ export const labModules: LabModule[] = [
     name: 'Marketplace with split payments',
     moneyFlow: 'Buyers pay the platform. Sellers are paid out, minus a fee.',
     examples: 'Gumroad, Udemy, Envato',
-    status: 'planned',
+    status: 'next',
   },
 ]

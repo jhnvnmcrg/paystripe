@@ -467,6 +467,82 @@ export const payUsageAlerts = pgTable(
   (table) => [index('pay_usage_alerts_user_idx').on(table.clerkUserId)],
 )
 
+/* Step 9: prepaid credits */
+
+/**
+ * A user's credit balance and auto-recharge settings. The balance only changes
+ * together with a ledger row, inside one transaction.
+ */
+export const payCreditAccounts = pgTable(
+  'pay_credit_accounts',
+  {
+    clerkUserId: text('clerk_user_id').primaryKey(),
+    balance: integer('balance').notNull().default(0),
+    autoRecharge: boolean('auto_recharge').notNull().default(false),
+    rechargeThreshold: integer('recharge_threshold').notNull().default(100),
+    rechargePack: text('recharge_pack').notNull().default('starter'),
+    /** The card saved for off-session charges, and how to show it. */
+    paymentMethodId: text('payment_method_id'),
+    cardBrand: text('card_brand'),
+    cardLast4: text('card_last4'),
+    /** Why the last automatic top-up failed. Cleared by a new card or a successful top-up. */
+    rechargeError: text('recharge_error'),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    // Credits can't be overspent, even if application code gets it wrong.
+    check('pay_credit_accounts_balance_ok', sql`${table.balance} >= 0`),
+  ],
+)
+
+export const creditLedgerKinds = ['purchase', 'recharge', 'spend', 'clawback'] as const
+
+/** Every change to a balance, append-only. Grants are keyed by what paid for them. */
+export const payCreditLedger = pgTable(
+  'pay_credit_ledger',
+  {
+    id: serial('id').primaryKey(),
+    clerkUserId: text('clerk_user_id').notNull(),
+    kind: text('kind', { enum: creditLedgerKinds }).notNull(),
+    /** Positive for grants, negative for spending and clawbacks. */
+    delta: integer('delta').notNull(),
+    balanceAfter: integer('balance_after').notNull(),
+    description: text('description').notNull(),
+    /**
+     * The Payment Intent (pi_…) that paid for a grant, or a refund's key.
+     * Unique, so `checkout.session.completed` and `payment_intent.succeeded`
+     * can't both grant the same pack.
+     */
+    sourceId: text('source_id').unique(),
+    orderId: uuid('order_id').references(() => payOrders.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('pay_credit_ledger_user_idx').on(table.clerkUserId)],
+)
+
+export const rechargeStatuses = ['pending', 'succeeded', 'failed'] as const
+
+/**
+ * One automatic top-up attempt. `triggerKey` names what caused it (the ledger
+ * row that crossed the threshold, and the card used), so the same trigger
+ * can never charge twice.
+ */
+export const payCreditRecharges = pgTable('pay_credit_recharges', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  clerkUserId: text('clerk_user_id').notNull(),
+  triggerKey: text('trigger_key').notNull().unique(),
+  orderId: uuid('order_id')
+    .notNull()
+    .unique()
+    .references(() => payOrders.id, { onDelete: 'cascade' }),
+  pack: text('pack').notNull(),
+  credits: integer('credits').notNull(),
+  status: text('status', { enum: rechargeStatuses }).notNull().default('pending'),
+  paymentIntentId: text('payment_intent_id').unique(),
+  error: text('error'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
 /** Tracking details once a paid order has been handed to a carrier. */
 export const payShipments = pgTable('pay_shipments', {
   orderId: uuid('order_id')

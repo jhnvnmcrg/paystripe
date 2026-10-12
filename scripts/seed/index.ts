@@ -1,4 +1,5 @@
 import type { LabModuleSlug } from '../../src/lib/lab/modules.ts'
+import { seedCredits } from './credits.ts'
 import { seedDownloads } from './downloads.ts'
 import { seedFreemium } from './freemium.ts'
 import { seedLicenseKeys } from './license-keys.ts'
@@ -23,4 +24,5 @@ export const moduleSeeds: ModuleSeed[] = [
   { module: 'freemium', run: seedFreemium },
   { module: 'membership', run: seedMembership },
   { module: 'usage', run: seedUsage },
+  { module: 'credits', run: seedCredits },
 ]

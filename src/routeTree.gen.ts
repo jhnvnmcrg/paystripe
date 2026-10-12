@@ -35,6 +35,8 @@ import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoGuitarsIndexRouteImport } from './routes/demo/guitars/index'
 import { Route as DemoGuitarsGuitarIdRouteImport } from './routes/demo/guitars/$guitarId'
 import { Route as DemoSentryTestingRouteImport } from './routes/demo/sentry.testing'
+import { Route as StripeCreditsIndexRouteImport } from './routes/stripe/credits/index'
+import { Route as StripeCreditsSuccessRouteImport } from './routes/stripe/credits/success'
 import { Route as StripeDownloadsIndexRouteImport } from './routes/stripe/downloads/index'
 import { Route as StripeDownloadsSuccessRouteImport } from './routes/stripe/downloads/success'
 import { Route as StripeFreemiumIndexRouteImport } from './routes/stripe/freemium/index'
@@ -189,6 +191,16 @@ const DemoSentryTestingRoute = DemoSentryTestingRouteImport.update({
   path: '/demo/sentry/testing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StripeCreditsIndexRoute = StripeCreditsIndexRouteImport.update({
+  id: '/stripe/credits/',
+  path: '/stripe/credits/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StripeCreditsSuccessRoute = StripeCreditsSuccessRouteImport.update({
+  id: '/stripe/credits/success',
+  path: '/stripe/credits/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StripeDownloadsIndexRoute = StripeDownloadsIndexRouteImport.update({
   id: '/stripe/downloads/',
   path: '/stripe/downloads/',
@@ -332,6 +344,7 @@ export interface FileRoutesByFullPath {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/guitars/$guitarId': typeof DemoGuitarsGuitarIdRoute
   '/demo/sentry/testing': typeof DemoSentryTestingRoute
+  '/stripe/credits/success': typeof StripeCreditsSuccessRoute
   '/stripe/downloads/success': typeof StripeDownloadsSuccessRoute
   '/stripe/freemium/success': typeof StripeFreemiumSuccessRoute
   '/stripe/license-keys/success': typeof StripeLicenseKeysSuccessRoute
@@ -342,6 +355,7 @@ export interface FileRoutesByFullPath {
   '/stripe/usage/success': typeof StripeUsageSuccessRoute
   '/stripe/web-tools/success': typeof StripeWebToolsSuccessRoute
   '/demo/guitars/': typeof DemoGuitarsIndexRoute
+  '/stripe/credits/': typeof StripeCreditsIndexRoute
   '/stripe/downloads/': typeof StripeDownloadsIndexRoute
   '/stripe/freemium/': typeof StripeFreemiumIndexRoute
   '/stripe/license-keys/': typeof StripeLicenseKeysIndexRoute
@@ -383,6 +397,7 @@ export interface FileRoutesByTo {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/guitars/$guitarId': typeof DemoGuitarsGuitarIdRoute
   '/demo/sentry/testing': typeof DemoSentryTestingRoute
+  '/stripe/credits/success': typeof StripeCreditsSuccessRoute
   '/stripe/downloads/success': typeof StripeDownloadsSuccessRoute
   '/stripe/freemium/success': typeof StripeFreemiumSuccessRoute
   '/stripe/license-keys/success': typeof StripeLicenseKeysSuccessRoute
@@ -393,6 +408,7 @@ export interface FileRoutesByTo {
   '/stripe/usage/success': typeof StripeUsageSuccessRoute
   '/stripe/web-tools/success': typeof StripeWebToolsSuccessRoute
   '/demo/guitars': typeof DemoGuitarsIndexRoute
+  '/stripe/credits': typeof StripeCreditsIndexRoute
   '/stripe/downloads': typeof StripeDownloadsIndexRoute
   '/stripe/freemium': typeof StripeFreemiumIndexRoute
   '/stripe/license-keys': typeof StripeLicenseKeysIndexRoute
@@ -435,6 +451,7 @@ export interface FileRoutesById {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/guitars/$guitarId': typeof DemoGuitarsGuitarIdRoute
   '/demo/sentry/testing': typeof DemoSentryTestingRoute
+  '/stripe/credits/success': typeof StripeCreditsSuccessRoute
   '/stripe/downloads/success': typeof StripeDownloadsSuccessRoute
   '/stripe/freemium/success': typeof StripeFreemiumSuccessRoute
   '/stripe/license-keys/success': typeof StripeLicenseKeysSuccessRoute
@@ -445,6 +462,7 @@ export interface FileRoutesById {
   '/stripe/usage/success': typeof StripeUsageSuccessRoute
   '/stripe/web-tools/success': typeof StripeWebToolsSuccessRoute
   '/demo/guitars/': typeof DemoGuitarsIndexRoute
+  '/stripe/credits/': typeof StripeCreditsIndexRoute
   '/stripe/downloads/': typeof StripeDownloadsIndexRoute
   '/stripe/freemium/': typeof StripeFreemiumIndexRoute
   '/stripe/license-keys/': typeof StripeLicenseKeysIndexRoute
@@ -488,6 +506,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/guitars/$guitarId'
     | '/demo/sentry/testing'
+    | '/stripe/credits/success'
     | '/stripe/downloads/success'
     | '/stripe/freemium/success'
     | '/stripe/license-keys/success'
@@ -498,6 +517,7 @@ export interface FileRouteTypes {
     | '/stripe/usage/success'
     | '/stripe/web-tools/success'
     | '/demo/guitars/'
+    | '/stripe/credits/'
     | '/stripe/downloads/'
     | '/stripe/freemium/'
     | '/stripe/license-keys/'
@@ -539,6 +559,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/guitars/$guitarId'
     | '/demo/sentry/testing'
+    | '/stripe/credits/success'
     | '/stripe/downloads/success'
     | '/stripe/freemium/success'
     | '/stripe/license-keys/success'
@@ -549,6 +570,7 @@ export interface FileRouteTypes {
     | '/stripe/usage/success'
     | '/stripe/web-tools/success'
     | '/demo/guitars'
+    | '/stripe/credits'
     | '/stripe/downloads'
     | '/stripe/freemium'
     | '/stripe/license-keys'
@@ -590,6 +612,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/guitars/$guitarId'
     | '/demo/sentry/testing'
+    | '/stripe/credits/success'
     | '/stripe/downloads/success'
     | '/stripe/freemium/success'
     | '/stripe/license-keys/success'
@@ -600,6 +623,7 @@ export interface FileRouteTypes {
     | '/stripe/usage/success'
     | '/stripe/web-tools/success'
     | '/demo/guitars/'
+    | '/stripe/credits/'
     | '/stripe/downloads/'
     | '/stripe/freemium/'
     | '/stripe/license-keys/'
@@ -642,6 +666,7 @@ export interface RootRouteChildren {
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
   DemoGuitarsGuitarIdRoute: typeof DemoGuitarsGuitarIdRoute
   DemoSentryTestingRoute: typeof DemoSentryTestingRoute
+  StripeCreditsSuccessRoute: typeof StripeCreditsSuccessRoute
   StripeDownloadsSuccessRoute: typeof StripeDownloadsSuccessRoute
   StripeFreemiumSuccessRoute: typeof StripeFreemiumSuccessRoute
   StripeLicenseKeysSuccessRoute: typeof StripeLicenseKeysSuccessRoute
@@ -652,6 +677,7 @@ export interface RootRouteChildren {
   StripeUsageSuccessRoute: typeof StripeUsageSuccessRoute
   StripeWebToolsSuccessRoute: typeof StripeWebToolsSuccessRoute
   DemoGuitarsIndexRoute: typeof DemoGuitarsIndexRoute
+  StripeCreditsIndexRoute: typeof StripeCreditsIndexRoute
   StripeDownloadsIndexRoute: typeof StripeDownloadsIndexRoute
   StripeFreemiumIndexRoute: typeof StripeFreemiumIndexRoute
   StripeLicenseKeysIndexRoute: typeof StripeLicenseKeysIndexRoute
@@ -852,6 +878,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoSentryTestingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stripe/credits/': {
+      id: '/stripe/credits/'
+      path: '/stripe/credits'
+      fullPath: '/stripe/credits/'
+      preLoaderRoute: typeof StripeCreditsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stripe/credits/success': {
+      id: '/stripe/credits/success'
+      path: '/stripe/credits/success'
+      fullPath: '/stripe/credits/success'
+      preLoaderRoute: typeof StripeCreditsSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stripe/downloads/': {
       id: '/stripe/downloads/'
       path: '/stripe/downloads'
@@ -1042,6 +1082,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoFormSimpleRoute: DemoFormSimpleRoute,
   DemoGuitarsGuitarIdRoute: DemoGuitarsGuitarIdRoute,
   DemoSentryTestingRoute: DemoSentryTestingRoute,
+  StripeCreditsSuccessRoute: StripeCreditsSuccessRoute,
   StripeDownloadsSuccessRoute: StripeDownloadsSuccessRoute,
   StripeFreemiumSuccessRoute: StripeFreemiumSuccessRoute,
   StripeLicenseKeysSuccessRoute: StripeLicenseKeysSuccessRoute,
@@ -1052,6 +1093,7 @@ const rootRouteChildren: RootRouteChildren = {
   StripeUsageSuccessRoute: StripeUsageSuccessRoute,
   StripeWebToolsSuccessRoute: StripeWebToolsSuccessRoute,
   DemoGuitarsIndexRoute: DemoGuitarsIndexRoute,
+  StripeCreditsIndexRoute: StripeCreditsIndexRoute,
   StripeDownloadsIndexRoute: StripeDownloadsIndexRoute,
   StripeFreemiumIndexRoute: StripeFreemiumIndexRoute,
   StripeLicenseKeysIndexRoute: StripeLicenseKeysIndexRoute,

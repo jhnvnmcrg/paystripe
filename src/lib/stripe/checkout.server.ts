@@ -33,10 +33,15 @@ const studioDefaults = {
   ui_mode: 'hosted_page',
   billing_address_collection: 'auto',
   phone_number_collection: { enabled: false },
-  automatic_tax: { enabled: false },
-  allow_promotion_codes: false,
   // The lab sends buyers to Checkout in a normal browser tab, not a mobile app's web view.
   origin_context: 'web',
+} satisfies Partial<Stripe.Checkout.SessionCreateParams>
+
+/** Studio settings that only apply when the session takes money. Stripe rejects them in setup mode. */
+const studioChargeDefaults = {
+  automatic_tax: { enabled: false },
+  allow_promotion_codes: false,
+  submit_type: 'auto',
 } satisfies Partial<Stripe.Checkout.SessionCreateParams>
 
 export interface LabCheckoutOptions {
@@ -72,8 +77,7 @@ export async function createLabCheckoutSession(
   const session = await getStripe().checkout.sessions.create(
     {
       ...studioDefaults,
-      // Stripe rejects submit_type in setup mode.
-      ...(options.params.mode !== 'setup' ? { submit_type: 'auto' } : {}),
+      ...(options.params.mode !== 'setup' ? studioChargeDefaults : {}),
       // Stripe only accepts payment_method_collection in subscription mode.
       ...(options.params.mode === 'subscription' ? { payment_method_collection: 'always' } : {}),
       // The module's choices win over the defaults above.
