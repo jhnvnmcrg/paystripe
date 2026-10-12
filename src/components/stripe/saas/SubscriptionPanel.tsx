@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import InvoiceList from '#/components/stripe/InvoiceList'
-import LocalTime from '#/components/stripe/LocalTime'
+import NextBillingDate from '#/components/stripe/NextBillingDate'
 import SubscriptionStatusBadge from '#/components/stripe/SubscriptionStatusBadge'
 import { Alert, AlertDescription, AlertTitle } from '#/components/ui/alert'
 import { Button } from '#/components/ui/button'
@@ -16,40 +16,12 @@ import { Separator } from '#/components/ui/separator'
 import { Spinner } from '#/components/ui/spinner'
 import { formatMoney } from '#/lib/lab/format'
 import { openSaasPortal } from '#/lib/lab/saas/saas.functions'
-import type { InvoiceView, SubscriptionView } from '#/lib/lab/saas/saas.server'
+import type { SubscriptionView } from '#/lib/lab/saas/saas.server'
+import type { InvoiceView } from '#/lib/stripe/billing.server'
 
 interface SubscriptionPanelProps {
   subscription: SubscriptionView | null
   invoices: InvoiceView[]
-}
-
-/** The renewal, trial-end or cancellation date that matters right now. */
-export function NextDate({ subscription }: { subscription: SubscriptionView }) {
-  if (subscription.status === 'canceled') {
-    return <>Ended</>
-  }
-  if (subscription.cancelAtPeriodEnd && subscription.currentPeriodEnd) {
-    return (
-      <>
-        Cancels on <LocalTime iso={subscription.cancelAt ?? subscription.currentPeriodEnd} />
-      </>
-    )
-  }
-  if (subscription.status === 'trialing' && subscription.trialEnd) {
-    return (
-      <>
-        Trial ends <LocalTime iso={subscription.trialEnd} />, then the first charge
-      </>
-    )
-  }
-  if (subscription.currentPeriodEnd) {
-    return (
-      <>
-        Renews on <LocalTime iso={subscription.currentPeriodEnd} />
-      </>
-    )
-  }
-  return null
 }
 
 export default function SubscriptionPanel({ subscription, invoices }: SubscriptionPanelProps) {
@@ -110,7 +82,7 @@ export default function SubscriptionPanel({ subscription, invoices }: Subscripti
               <SubscriptionStatusBadge status={subscription.status} />
             </div>
             <p className="m-0 text-sm text-ink-soft">
-              <NextDate subscription={subscription} />
+              <NextBillingDate subscription={subscription} />
             </p>
 
             <AccessNote subscription={subscription} />

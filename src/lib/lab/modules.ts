@@ -73,7 +73,8 @@ export const labModules: LabModule[] = [
     name: 'Subscription-gated web tools',
     moneyFlow: 'The plan a customer pays for unlocks specific features.',
     examples: 'Background removers, SEO trackers, analytics dashboards',
-    status: 'next',
+    status: 'ready',
+    to: '/stripe/web-tools',
   },
   {
     step: 6,
@@ -81,7 +82,7 @@ export const labModules: LabModule[] = [
     name: 'Freemium with paid add-ons',
     moneyFlow: 'Free to start. Upgrades and add-ons bill on one subscription.',
     examples: 'GitHub, ChatGPT Plus, Spotify',
-    status: 'planned',
+    status: 'next',
   },
   {
     step: 7,
