@@ -1,3 +1,4 @@
+import { creditsEventHandlers, creditsWebhooks } from '#/lib/lab/credits/webhooks.server'
 import { downloadWebhooks } from '#/lib/lab/downloads/webhooks.server'
 import { freemiumWebhooks } from '#/lib/lab/freemium/webhooks.server'
 import { licenseKeyWebhooks } from '#/lib/lab/license-keys/webhooks.server'
@@ -22,6 +23,7 @@ export const moduleHandlers: Partial<Record<LabModuleSlug, ModuleWebhookHandlers
   freemium: freemiumWebhooks,
   membership: membershipWebhooks,
   usage: usageWebhooks,
+  credits: creditsWebhooks,
 }
 
 /**
@@ -32,4 +34,5 @@ export const extraEventHandlers: RegisteredEventHandler[] = [
   ...webToolsEventHandlers,
   ...membershipEventHandlers,
   ...usageEventHandlers,
+  ...creditsEventHandlers,
 ]
