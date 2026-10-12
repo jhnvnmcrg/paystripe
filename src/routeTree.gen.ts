@@ -39,6 +39,8 @@ import { Route as StripeDownloadsIndexRouteImport } from './routes/stripe/downlo
 import { Route as StripeDownloadsSuccessRouteImport } from './routes/stripe/downloads/success'
 import { Route as StripeLicenseKeysIndexRouteImport } from './routes/stripe/license-keys/index'
 import { Route as StripeLicenseKeysSuccessRouteImport } from './routes/stripe/license-keys/success'
+import { Route as StripeSaasIndexRouteImport } from './routes/stripe/saas/index'
+import { Route as StripeSaasSuccessRouteImport } from './routes/stripe/saas/success'
 import { Route as StripeShopIndexRouteImport } from './routes/stripe/shop/index'
 import { Route as StripeShopSuccessRouteImport } from './routes/stripe/shop/success'
 import { Route as DemoApiAiChatRouteImport } from './routes/demo/api.ai.chat'
@@ -198,6 +200,16 @@ const StripeLicenseKeysSuccessRoute =
     path: '/stripe/license-keys/success',
     getParentRoute: () => rootRouteImport,
   } as any)
+const StripeSaasIndexRoute = StripeSaasIndexRouteImport.update({
+  id: '/stripe/saas/',
+  path: '/stripe/saas/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StripeSaasSuccessRoute = StripeSaasSuccessRouteImport.update({
+  id: '/stripe/saas/success',
+  path: '/stripe/saas/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StripeShopIndexRoute = StripeShopIndexRouteImport.update({
   id: '/stripe/shop/',
   path: '/stripe/shop/',
@@ -262,10 +274,12 @@ export interface FileRoutesByFullPath {
   '/demo/sentry/testing': typeof DemoSentryTestingRoute
   '/stripe/downloads/success': typeof StripeDownloadsSuccessRoute
   '/stripe/license-keys/success': typeof StripeLicenseKeysSuccessRoute
+  '/stripe/saas/success': typeof StripeSaasSuccessRoute
   '/stripe/shop/success': typeof StripeShopSuccessRoute
   '/demo/guitars/': typeof DemoGuitarsIndexRoute
   '/stripe/downloads/': typeof StripeDownloadsIndexRoute
   '/stripe/license-keys/': typeof StripeLicenseKeysIndexRoute
+  '/stripe/saas/': typeof StripeSaasIndexRoute
   '/stripe/shop/': typeof StripeShopIndexRoute
   '/demo/api/ai/chat': typeof DemoApiAiChatRoute
   '/demo/api/ai/image': typeof DemoApiAiImageRoute
@@ -301,10 +315,12 @@ export interface FileRoutesByTo {
   '/demo/sentry/testing': typeof DemoSentryTestingRoute
   '/stripe/downloads/success': typeof StripeDownloadsSuccessRoute
   '/stripe/license-keys/success': typeof StripeLicenseKeysSuccessRoute
+  '/stripe/saas/success': typeof StripeSaasSuccessRoute
   '/stripe/shop/success': typeof StripeShopSuccessRoute
   '/demo/guitars': typeof DemoGuitarsIndexRoute
   '/stripe/downloads': typeof StripeDownloadsIndexRoute
   '/stripe/license-keys': typeof StripeLicenseKeysIndexRoute
+  '/stripe/saas': typeof StripeSaasIndexRoute
   '/stripe/shop': typeof StripeShopIndexRoute
   '/demo/api/ai/chat': typeof DemoApiAiChatRoute
   '/demo/api/ai/image': typeof DemoApiAiImageRoute
@@ -341,10 +357,12 @@ export interface FileRoutesById {
   '/demo/sentry/testing': typeof DemoSentryTestingRoute
   '/stripe/downloads/success': typeof StripeDownloadsSuccessRoute
   '/stripe/license-keys/success': typeof StripeLicenseKeysSuccessRoute
+  '/stripe/saas/success': typeof StripeSaasSuccessRoute
   '/stripe/shop/success': typeof StripeShopSuccessRoute
   '/demo/guitars/': typeof DemoGuitarsIndexRoute
   '/stripe/downloads/': typeof StripeDownloadsIndexRoute
   '/stripe/license-keys/': typeof StripeLicenseKeysIndexRoute
+  '/stripe/saas/': typeof StripeSaasIndexRoute
   '/stripe/shop/': typeof StripeShopIndexRoute
   '/demo/api/ai/chat': typeof DemoApiAiChatRoute
   '/demo/api/ai/image': typeof DemoApiAiImageRoute
@@ -382,10 +400,12 @@ export interface FileRouteTypes {
     | '/demo/sentry/testing'
     | '/stripe/downloads/success'
     | '/stripe/license-keys/success'
+    | '/stripe/saas/success'
     | '/stripe/shop/success'
     | '/demo/guitars/'
     | '/stripe/downloads/'
     | '/stripe/license-keys/'
+    | '/stripe/saas/'
     | '/stripe/shop/'
     | '/demo/api/ai/chat'
     | '/demo/api/ai/image'
@@ -421,10 +441,12 @@ export interface FileRouteTypes {
     | '/demo/sentry/testing'
     | '/stripe/downloads/success'
     | '/stripe/license-keys/success'
+    | '/stripe/saas/success'
     | '/stripe/shop/success'
     | '/demo/guitars'
     | '/stripe/downloads'
     | '/stripe/license-keys'
+    | '/stripe/saas'
     | '/stripe/shop'
     | '/demo/api/ai/chat'
     | '/demo/api/ai/image'
@@ -460,10 +482,12 @@ export interface FileRouteTypes {
     | '/demo/sentry/testing'
     | '/stripe/downloads/success'
     | '/stripe/license-keys/success'
+    | '/stripe/saas/success'
     | '/stripe/shop/success'
     | '/demo/guitars/'
     | '/stripe/downloads/'
     | '/stripe/license-keys/'
+    | '/stripe/saas/'
     | '/stripe/shop/'
     | '/demo/api/ai/chat'
     | '/demo/api/ai/image'
@@ -500,10 +524,12 @@ export interface RootRouteChildren {
   DemoSentryTestingRoute: typeof DemoSentryTestingRoute
   StripeDownloadsSuccessRoute: typeof StripeDownloadsSuccessRoute
   StripeLicenseKeysSuccessRoute: typeof StripeLicenseKeysSuccessRoute
+  StripeSaasSuccessRoute: typeof StripeSaasSuccessRoute
   StripeShopSuccessRoute: typeof StripeShopSuccessRoute
   DemoGuitarsIndexRoute: typeof DemoGuitarsIndexRoute
   StripeDownloadsIndexRoute: typeof StripeDownloadsIndexRoute
   StripeLicenseKeysIndexRoute: typeof StripeLicenseKeysIndexRoute
+  StripeSaasIndexRoute: typeof StripeSaasIndexRoute
   StripeShopIndexRoute: typeof StripeShopIndexRoute
   DemoApiAiChatRoute: typeof DemoApiAiChatRoute
   DemoApiAiImageRoute: typeof DemoApiAiImageRoute
@@ -724,6 +750,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StripeLicenseKeysSuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stripe/saas/': {
+      id: '/stripe/saas/'
+      path: '/stripe/saas'
+      fullPath: '/stripe/saas/'
+      preLoaderRoute: typeof StripeSaasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stripe/saas/success': {
+      id: '/stripe/saas/success'
+      path: '/stripe/saas/success'
+      fullPath: '/stripe/saas/success'
+      preLoaderRoute: typeof StripeSaasSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stripe/shop/': {
       id: '/stripe/shop/'
       path: '/stripe/shop'
@@ -804,10 +844,12 @@ const rootRouteChildren: RootRouteChildren = {
   DemoSentryTestingRoute: DemoSentryTestingRoute,
   StripeDownloadsSuccessRoute: StripeDownloadsSuccessRoute,
   StripeLicenseKeysSuccessRoute: StripeLicenseKeysSuccessRoute,
+  StripeSaasSuccessRoute: StripeSaasSuccessRoute,
   StripeShopSuccessRoute: StripeShopSuccessRoute,
   DemoGuitarsIndexRoute: DemoGuitarsIndexRoute,
   StripeDownloadsIndexRoute: StripeDownloadsIndexRoute,
   StripeLicenseKeysIndexRoute: StripeLicenseKeysIndexRoute,
+  StripeSaasIndexRoute: StripeSaasIndexRoute,
   StripeShopIndexRoute: StripeShopIndexRoute,
   DemoApiAiChatRoute: DemoApiAiChatRoute,
   DemoApiAiImageRoute: DemoApiAiImageRoute,

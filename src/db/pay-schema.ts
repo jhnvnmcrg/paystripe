@@ -248,6 +248,74 @@ export const payReservations = pgTable(
   (table) => [uniqueIndex('pay_reservations_order_sku_idx').on(table.orderId, table.sku)],
 )
 
+/* Step 4 onward: subscriptions */
+
+/** One line of a subscription, as last synced from Stripe. */
+export interface StoredSubscriptionItem {
+  id: string
+  priceId: string
+  lookupKey: string | null
+  productId: string
+  productName: string
+  quantity: number
+  unitAmount: number | null
+  interval: string | null
+}
+
+/**
+ * A local copy of a Stripe subscription, rewritten from a fresh fetch on every
+ * subscription or invoice event, so its state is never older than the latest event.
+ */
+export const paySubscriptions = pgTable(
+  'pay_subscriptions',
+  {
+    /** The Stripe subscription ID (sub_…). */
+    id: text('id').primaryKey(),
+    module: text('module').notNull(),
+    clerkUserId: text('clerk_user_id').notNull(),
+    stripeCustomerId: text('stripe_customer_id').notNull(),
+    /** Stripe's status: trialing, active, past_due, canceled, unpaid, incomplete, … */
+    status: text('status').notNull(),
+    /** The first item's price lookup key: the plan. */
+    priceLookupKey: text('price_lookup_key'),
+    items: jsonb('items').$type<StoredSubscriptionItem[]>().notNull(),
+    currency: text('currency').notNull(),
+    currentPeriodStart: timestamp('current_period_start', { withTimezone: true }),
+    currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
+    cancelAtPeriodEnd: boolean('cancel_at_period_end').notNull().default(false),
+    cancelAt: timestamp('cancel_at', { withTimezone: true }),
+    canceledAt: timestamp('canceled_at', { withTimezone: true }),
+    trialEnd: timestamp('trial_end', { withTimezone: true }),
+    /** Set when the subscription lives on a test clock (a time-travel run), not the user's real customer. */
+    testClockRunId: uuid('test_clock_run_id'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('pay_subscriptions_user_module_idx').on(table.clerkUserId, table.module)],
+)
+
+export type PaySubscription = typeof paySubscriptions.$inferSelect
+
+/**
+ * A time-travel sandbox: a Stripe test clock with its own customer, so renewals
+ * can be fast-forwarded without touching the user's real customer.
+ */
+export const payTestClockRuns = pgTable(
+  'pay_test_clock_runs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    clerkUserId: text('clerk_user_id').notNull(),
+    module: text('module').notNull(),
+    testClockId: text('test_clock_id').notNull().unique(),
+    stripeCustomerId: text('stripe_customer_id').notNull().unique(),
+    subscriptionId: text('subscription_id'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('pay_test_clock_runs_user_module_idx').on(table.clerkUserId, table.module)],
+)
+
+export type PayTestClockRun = typeof payTestClockRuns.$inferSelect
+
 /** Tracking details once a paid order has been handed to a carrier. */
 export const payShipments = pgTable('pay_shipments', {
   orderId: uuid('order_id')

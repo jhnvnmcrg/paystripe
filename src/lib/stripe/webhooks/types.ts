@@ -1,6 +1,6 @@
 import type Stripe from 'stripe'
 import type { DbTransaction } from '#/db/index'
-import type { PayCheckoutSession, PayOrder } from '#/db/pay-schema'
+import type { PayCheckoutSession, PayOrder, PaySubscription } from '#/db/pay-schema'
 
 export type StripeEventType = Stripe.Event['type']
 export type EventOf<T extends StripeEventType> = Extract<Stripe.Event, { type: T }>
@@ -36,6 +36,11 @@ export interface ModuleWebhookHandlers {
   onDisputeClosed?: (
     order: PayOrder,
     ctx: WebhookContext & { outcome: 'won' | 'lost' },
+  ) => Promise<void>
+  /** A subscription of this module was created or changed (status, plan, period, cancellation). */
+  onSubscriptionChanged?: (
+    subscription: PaySubscription,
+    ctx: WebhookContext & { previousStatus: string | null },
   ) => Promise<void>
 }
 
