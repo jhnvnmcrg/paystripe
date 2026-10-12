@@ -41,6 +41,9 @@ import { Route as StripeFreemiumIndexRouteImport } from './routes/stripe/freemiu
 import { Route as StripeFreemiumSuccessRouteImport } from './routes/stripe/freemium/success'
 import { Route as StripeLicenseKeysIndexRouteImport } from './routes/stripe/license-keys/index'
 import { Route as StripeLicenseKeysSuccessRouteImport } from './routes/stripe/license-keys/success'
+import { Route as StripeMembershipIndexRouteImport } from './routes/stripe/membership/index'
+import { Route as StripeMembershipFeedRouteImport } from './routes/stripe/membership/feed'
+import { Route as StripeMembershipSuccessRouteImport } from './routes/stripe/membership/success'
 import { Route as StripeSaasIndexRouteImport } from './routes/stripe/saas/index'
 import { Route as StripeSaasSuccessRouteImport } from './routes/stripe/saas/success'
 import { Route as StripeShopIndexRouteImport } from './routes/stripe/shop/index'
@@ -215,6 +218,21 @@ const StripeLicenseKeysSuccessRoute =
     path: '/stripe/license-keys/success',
     getParentRoute: () => rootRouteImport,
   } as any)
+const StripeMembershipIndexRoute = StripeMembershipIndexRouteImport.update({
+  id: '/stripe/membership/',
+  path: '/stripe/membership/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StripeMembershipFeedRoute = StripeMembershipFeedRouteImport.update({
+  id: '/stripe/membership/feed',
+  path: '/stripe/membership/feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StripeMembershipSuccessRoute = StripeMembershipSuccessRouteImport.update({
+  id: '/stripe/membership/success',
+  path: '/stripe/membership/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StripeSaasIndexRoute = StripeSaasIndexRouteImport.update({
   id: '/stripe/saas/',
   path: '/stripe/saas/',
@@ -305,6 +323,8 @@ export interface FileRoutesByFullPath {
   '/stripe/downloads/success': typeof StripeDownloadsSuccessRoute
   '/stripe/freemium/success': typeof StripeFreemiumSuccessRoute
   '/stripe/license-keys/success': typeof StripeLicenseKeysSuccessRoute
+  '/stripe/membership/feed': typeof StripeMembershipFeedRoute
+  '/stripe/membership/success': typeof StripeMembershipSuccessRoute
   '/stripe/saas/success': typeof StripeSaasSuccessRoute
   '/stripe/shop/success': typeof StripeShopSuccessRoute
   '/stripe/web-tools/success': typeof StripeWebToolsSuccessRoute
@@ -312,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/stripe/downloads/': typeof StripeDownloadsIndexRoute
   '/stripe/freemium/': typeof StripeFreemiumIndexRoute
   '/stripe/license-keys/': typeof StripeLicenseKeysIndexRoute
+  '/stripe/membership/': typeof StripeMembershipIndexRoute
   '/stripe/saas/': typeof StripeSaasIndexRoute
   '/stripe/shop/': typeof StripeShopIndexRoute
   '/stripe/web-tools/': typeof StripeWebToolsIndexRoute
@@ -351,6 +372,8 @@ export interface FileRoutesByTo {
   '/stripe/downloads/success': typeof StripeDownloadsSuccessRoute
   '/stripe/freemium/success': typeof StripeFreemiumSuccessRoute
   '/stripe/license-keys/success': typeof StripeLicenseKeysSuccessRoute
+  '/stripe/membership/feed': typeof StripeMembershipFeedRoute
+  '/stripe/membership/success': typeof StripeMembershipSuccessRoute
   '/stripe/saas/success': typeof StripeSaasSuccessRoute
   '/stripe/shop/success': typeof StripeShopSuccessRoute
   '/stripe/web-tools/success': typeof StripeWebToolsSuccessRoute
@@ -358,6 +381,7 @@ export interface FileRoutesByTo {
   '/stripe/downloads': typeof StripeDownloadsIndexRoute
   '/stripe/freemium': typeof StripeFreemiumIndexRoute
   '/stripe/license-keys': typeof StripeLicenseKeysIndexRoute
+  '/stripe/membership': typeof StripeMembershipIndexRoute
   '/stripe/saas': typeof StripeSaasIndexRoute
   '/stripe/shop': typeof StripeShopIndexRoute
   '/stripe/web-tools': typeof StripeWebToolsIndexRoute
@@ -398,6 +422,8 @@ export interface FileRoutesById {
   '/stripe/downloads/success': typeof StripeDownloadsSuccessRoute
   '/stripe/freemium/success': typeof StripeFreemiumSuccessRoute
   '/stripe/license-keys/success': typeof StripeLicenseKeysSuccessRoute
+  '/stripe/membership/feed': typeof StripeMembershipFeedRoute
+  '/stripe/membership/success': typeof StripeMembershipSuccessRoute
   '/stripe/saas/success': typeof StripeSaasSuccessRoute
   '/stripe/shop/success': typeof StripeShopSuccessRoute
   '/stripe/web-tools/success': typeof StripeWebToolsSuccessRoute
@@ -405,6 +431,7 @@ export interface FileRoutesById {
   '/stripe/downloads/': typeof StripeDownloadsIndexRoute
   '/stripe/freemium/': typeof StripeFreemiumIndexRoute
   '/stripe/license-keys/': typeof StripeLicenseKeysIndexRoute
+  '/stripe/membership/': typeof StripeMembershipIndexRoute
   '/stripe/saas/': typeof StripeSaasIndexRoute
   '/stripe/shop/': typeof StripeShopIndexRoute
   '/stripe/web-tools/': typeof StripeWebToolsIndexRoute
@@ -446,6 +473,8 @@ export interface FileRouteTypes {
     | '/stripe/downloads/success'
     | '/stripe/freemium/success'
     | '/stripe/license-keys/success'
+    | '/stripe/membership/feed'
+    | '/stripe/membership/success'
     | '/stripe/saas/success'
     | '/stripe/shop/success'
     | '/stripe/web-tools/success'
@@ -453,6 +482,7 @@ export interface FileRouteTypes {
     | '/stripe/downloads/'
     | '/stripe/freemium/'
     | '/stripe/license-keys/'
+    | '/stripe/membership/'
     | '/stripe/saas/'
     | '/stripe/shop/'
     | '/stripe/web-tools/'
@@ -492,6 +522,8 @@ export interface FileRouteTypes {
     | '/stripe/downloads/success'
     | '/stripe/freemium/success'
     | '/stripe/license-keys/success'
+    | '/stripe/membership/feed'
+    | '/stripe/membership/success'
     | '/stripe/saas/success'
     | '/stripe/shop/success'
     | '/stripe/web-tools/success'
@@ -499,6 +531,7 @@ export interface FileRouteTypes {
     | '/stripe/downloads'
     | '/stripe/freemium'
     | '/stripe/license-keys'
+    | '/stripe/membership'
     | '/stripe/saas'
     | '/stripe/shop'
     | '/stripe/web-tools'
@@ -538,6 +571,8 @@ export interface FileRouteTypes {
     | '/stripe/downloads/success'
     | '/stripe/freemium/success'
     | '/stripe/license-keys/success'
+    | '/stripe/membership/feed'
+    | '/stripe/membership/success'
     | '/stripe/saas/success'
     | '/stripe/shop/success'
     | '/stripe/web-tools/success'
@@ -545,6 +580,7 @@ export interface FileRouteTypes {
     | '/stripe/downloads/'
     | '/stripe/freemium/'
     | '/stripe/license-keys/'
+    | '/stripe/membership/'
     | '/stripe/saas/'
     | '/stripe/shop/'
     | '/stripe/web-tools/'
@@ -585,6 +621,8 @@ export interface RootRouteChildren {
   StripeDownloadsSuccessRoute: typeof StripeDownloadsSuccessRoute
   StripeFreemiumSuccessRoute: typeof StripeFreemiumSuccessRoute
   StripeLicenseKeysSuccessRoute: typeof StripeLicenseKeysSuccessRoute
+  StripeMembershipFeedRoute: typeof StripeMembershipFeedRoute
+  StripeMembershipSuccessRoute: typeof StripeMembershipSuccessRoute
   StripeSaasSuccessRoute: typeof StripeSaasSuccessRoute
   StripeShopSuccessRoute: typeof StripeShopSuccessRoute
   StripeWebToolsSuccessRoute: typeof StripeWebToolsSuccessRoute
@@ -592,6 +630,7 @@ export interface RootRouteChildren {
   StripeDownloadsIndexRoute: typeof StripeDownloadsIndexRoute
   StripeFreemiumIndexRoute: typeof StripeFreemiumIndexRoute
   StripeLicenseKeysIndexRoute: typeof StripeLicenseKeysIndexRoute
+  StripeMembershipIndexRoute: typeof StripeMembershipIndexRoute
   StripeSaasIndexRoute: typeof StripeSaasIndexRoute
   StripeShopIndexRoute: typeof StripeShopIndexRoute
   StripeWebToolsIndexRoute: typeof StripeWebToolsIndexRoute
@@ -829,6 +868,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StripeLicenseKeysSuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stripe/membership/': {
+      id: '/stripe/membership/'
+      path: '/stripe/membership'
+      fullPath: '/stripe/membership/'
+      preLoaderRoute: typeof StripeMembershipIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stripe/membership/feed': {
+      id: '/stripe/membership/feed'
+      path: '/stripe/membership/feed'
+      fullPath: '/stripe/membership/feed'
+      preLoaderRoute: typeof StripeMembershipFeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stripe/membership/success': {
+      id: '/stripe/membership/success'
+      path: '/stripe/membership/success'
+      fullPath: '/stripe/membership/success'
+      preLoaderRoute: typeof StripeMembershipSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stripe/saas/': {
       id: '/stripe/saas/'
       path: '/stripe/saas'
@@ -945,6 +1005,8 @@ const rootRouteChildren: RootRouteChildren = {
   StripeDownloadsSuccessRoute: StripeDownloadsSuccessRoute,
   StripeFreemiumSuccessRoute: StripeFreemiumSuccessRoute,
   StripeLicenseKeysSuccessRoute: StripeLicenseKeysSuccessRoute,
+  StripeMembershipFeedRoute: StripeMembershipFeedRoute,
+  StripeMembershipSuccessRoute: StripeMembershipSuccessRoute,
   StripeSaasSuccessRoute: StripeSaasSuccessRoute,
   StripeShopSuccessRoute: StripeShopSuccessRoute,
   StripeWebToolsSuccessRoute: StripeWebToolsSuccessRoute,
@@ -952,6 +1014,7 @@ const rootRouteChildren: RootRouteChildren = {
   StripeDownloadsIndexRoute: StripeDownloadsIndexRoute,
   StripeFreemiumIndexRoute: StripeFreemiumIndexRoute,
   StripeLicenseKeysIndexRoute: StripeLicenseKeysIndexRoute,
+  StripeMembershipIndexRoute: StripeMembershipIndexRoute,
   StripeSaasIndexRoute: StripeSaasIndexRoute,
   StripeShopIndexRoute: StripeShopIndexRoute,
   StripeWebToolsIndexRoute: StripeWebToolsIndexRoute,

@@ -363,6 +363,63 @@ export const payFreemiumProjects = pgTable(
   (table) => [index('pay_freemium_projects_user_idx').on(table.clerkUserId)],
 )
 
+/* Step 7: memberships and patronage */
+
+/** A member's own settings, and the community role last granted to them. */
+export const payMembers = pgTable('pay_members', {
+  clerkUserId: text('clerk_user_id').primaryKey(),
+  /** The name shown on the supporter wall. Null shows as anonymous. */
+  wallName: text('wall_name'),
+  /** The (simulated) Discord role the member has now, or null for none. */
+  communityRole: text('community_role'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+/**
+ * Each change to a member's community role. In production this is an outbox:
+ * a worker would make the Discord API call for each row.
+ */
+export const payMemberRoleChanges = pgTable(
+  'pay_member_role_changes',
+  {
+    id: serial('id').primaryKey(),
+    clerkUserId: text('clerk_user_id').notNull(),
+    fromRole: text('from_role'),
+    toRole: text('to_role'),
+    /** The subscription status that caused the change. */
+    subscriptionStatus: text('subscription_status'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('pay_member_role_changes_user_idx').on(table.clerkUserId)],
+)
+
+export const contributionKinds = ['membership', 'tip'] as const
+
+/**
+ * Money a supporter has given: one row per paid membership invoice or tip.
+ * The supporter wall's totals and "member since" dates come from here.
+ */
+export const payContributions = pgTable(
+  'pay_contributions',
+  {
+    id: serial('id').primaryKey(),
+    clerkUserId: text('clerk_user_id').notNull(),
+    kind: text('kind', { enum: contributionKinds }).notNull(),
+    /** The invoice (in_…) or tip payment (pi_…), so a repeated event can't count twice. */
+    sourceId: text('source_id').notNull().unique(),
+    orderId: uuid('order_id').references(() => payOrders.id, { onDelete: 'cascade' }),
+    subscriptionId: text('subscription_id'),
+    description: text('description').notNull(),
+    amount: integer('amount').notNull(),
+    amountRefunded: integer('amount_refunded').notNull().default(0),
+    currency: text('currency').notNull(),
+    /** The note a tipper left on Stripe's page. */
+    message: text('message'),
+    paidAt: timestamp('paid_at', { withTimezone: true }).notNull(),
+  },
+  (table) => [index('pay_contributions_user_idx').on(table.clerkUserId)],
+)
+
 /** Tracking details once a paid order has been handed to a carrier. */
 export const payShipments = pgTable('pay_shipments', {
   orderId: uuid('order_id')

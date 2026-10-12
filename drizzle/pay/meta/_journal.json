@@ -50,6 +50,13 @@
       "when": 1791774497433,
       "tag": "0006_nice_lethal_legion",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791775873044,
+      "tag": "0007_aromatic_demogoblin",
+      "breakpoints": true
     }
   ]
 }
