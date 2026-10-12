@@ -28,11 +28,11 @@ function Home() {
     <main className="page-wrap px-4 pb-16 pt-14 sm:pt-20">
       <section className="max-w-3xl">
         <h1 className="display-title m-0 text-4xl leading-[1.05] text-ink sm:text-6xl">
-          Ten ways to get paid, wired end to end.
+          Nine ways to get paid, wired end to end.
         </h1>
         <p className="m-0 mt-5 max-w-2xl text-base text-ink-soft sm:text-lg">
           Working demos of the most common ways to sell software and goods, from
-          a $29 license key to a marketplace payout. Each one runs against your
+          a $29 license key to metered API billing. Each one runs against your
           Stripe sandbox, so no real money moves.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">

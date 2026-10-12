@@ -73,7 +73,7 @@ export const orderStatuses = [
   'dispute_lost',
 ] as const
 
-/** One-time purchases (license keys, downloads, physical goods, marketplace). */
+/** One-time purchases (license keys, downloads, physical goods, tips, credit packs). */
 export const payOrders = pgTable(
   'pay_orders',
   {
@@ -89,7 +89,6 @@ export const payOrders = pgTable(
     amountShipping: integer('amount_shipping').notNull().default(0),
     amountTotal: integer('amount_total'),
     amountRefunded: integer('amount_refunded').notNull().default(0),
-    applicationFeeAmount: integer('application_fee_amount'),
     shipping: jsonb('shipping').$type<StoredShipping>(),
     /** Module-defined, for example `unfulfilled` or `shipped`. */
     fulfillmentStatus: text('fulfillment_status'),

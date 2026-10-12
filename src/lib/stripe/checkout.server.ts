@@ -22,7 +22,6 @@ const integrationIdentifiers: Record<LabModuleSlug, string> = {
   membership: 'lab-membership-xekfbnwo',
   usage: 'lab-usage-rjtqmyhd',
   credits: 'lab-credits-zuowkfbi',
-  marketplace: 'lab-marketplace-elsgdvqa',
 }
 
 /**

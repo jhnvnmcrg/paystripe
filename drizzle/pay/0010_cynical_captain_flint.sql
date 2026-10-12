@@ -1,0 +1,1 @@
+ALTER TABLE "pay_orders" DROP COLUMN "application_fee_amount";

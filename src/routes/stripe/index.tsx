@@ -58,7 +58,7 @@ function LabHub() {
           />
           <FlowNotes
             title="How every demo works"
-            description="The same five steps sit underneath all ten selling types."
+            description="The same five steps sit underneath all nine selling types."
             steps={[
               'You sign in, and the server finds or creates your Stripe customer.',
               "The server creates a Checkout Session and sends you to Stripe's payment page.",

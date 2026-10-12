@@ -12,7 +12,6 @@ export type LabModuleSlug =
   | 'membership'
   | 'usage'
   | 'credits'
-  | 'marketplace'
 
 export interface LabModule {
   step: number
@@ -111,13 +110,5 @@ export const labModules: LabModule[] = [
     examples: 'AI image generators, SMS senders, background jobs',
     status: 'ready',
     to: '/stripe/credits',
-  },
-  {
-    step: 10,
-    slug: 'marketplace',
-    name: 'Marketplace with split payments',
-    moneyFlow: 'Buyers pay the platform. Sellers are paid out, minus a fee.',
-    examples: 'Gumroad, Udemy, Envato',
-    status: 'next',
   },
 ]
