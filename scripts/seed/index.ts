@@ -5,6 +5,7 @@ import { seedLicenseKeys } from './license-keys.ts'
 import { seedMembership } from './membership.ts'
 import { seedSaas } from './saas.ts'
 import { seedShop } from './shop.ts'
+import { seedUsage } from './usage.ts'
 import { seedWebTools } from './web-tools.ts'
 
 export interface ModuleSeed {
@@ -21,4 +22,5 @@ export const moduleSeeds: ModuleSeed[] = [
   { module: 'web-tools', run: seedWebTools },
   { module: 'freemium', run: seedFreemium },
   { module: 'membership', run: seedMembership },
+  { module: 'usage', run: seedUsage },
 ]
