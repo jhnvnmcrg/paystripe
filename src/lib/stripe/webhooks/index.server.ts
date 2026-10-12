@@ -11,6 +11,7 @@ import {
   handleDisputeCreated,
 } from './charges.server'
 import { findCheckoutRoute, fulfillPaidCheckout } from './checkout-routing.server'
+import { subscriptionEventHandlers } from './subscription-events.server'
 import { extraEventHandlers, moduleHandlers } from './modules.server'
 import type { EventOf, RegisteredEventHandler, WebhookContext } from './types'
 import { onEvent } from './types'
@@ -87,6 +88,7 @@ const coreHandlers: RegisteredEventHandler[] = [
   onEvent('charge.dispute.created', handleDisputeCreated),
   onEvent('charge.dispute.closed', handleDisputeClosed),
   onEvent('customer.deleted', forgetDeletedCustomer),
+  ...subscriptionEventHandlers,
 ]
 
 function handlersFor(type: Stripe.Event['type']): RegisteredEventHandler[] {

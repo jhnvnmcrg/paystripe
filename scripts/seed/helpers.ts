@@ -151,6 +151,27 @@ export async function ensureShippingRate(spec: {
 }
 
 /**
+ * Portal configurations can't take a fixed ID either, so they're found by
+ * `metadata.lab_key`. Unlike prices, they can be updated in place.
+ */
+export async function ensurePortalConfiguration(
+  key: string,
+  params: Stripe.BillingPortal.ConfigurationCreateParams,
+): Promise<Stripe.BillingPortal.Configuration> {
+  const stripe = getStripe()
+  const { data } = await stripe.billingPortal.configurations.list({ limit: 100 })
+  const existing = data.find((configuration) => configuration.metadata?.lab_key === key)
+  const withKey = { ...params, metadata: { ...params.metadata, lab_key: key } }
+
+  if (existing) {
+    console.log(`  updated portal configuration ${key}`)
+    return stripe.billingPortal.configurations.update(existing.id, withKey)
+  }
+  console.log(`  created portal configuration ${key}`)
+  return stripe.billingPortal.configurations.create(withKey)
+}
+
+/**
  * Finds the price by lookup key, or creates it. Prices can't be edited, so a
  * changed spec creates a new price, moves the lookup key over and archives the old one.
  */

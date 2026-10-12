@@ -64,7 +64,8 @@ export const labModules: LabModule[] = [
     name: 'SaaS subscriptions',
     moneyFlow: 'Billed monthly or yearly until the customer cancels.',
     examples: 'Netflix, Canva, Notion, Figma',
-    status: 'next',
+    status: 'ready',
+    to: '/stripe/saas',
   },
   {
     step: 5,
@@ -72,7 +73,7 @@ export const labModules: LabModule[] = [
     name: 'Subscription-gated web tools',
     moneyFlow: 'The plan a customer pays for unlocks specific features.',
     examples: 'Background removers, SEO trackers, analytics dashboards',
-    status: 'planned',
+    status: 'next',
   },
   {
     step: 6,
