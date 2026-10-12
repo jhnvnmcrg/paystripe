@@ -7,6 +7,7 @@ import {
   serial,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core'
 
@@ -50,6 +51,7 @@ export const orderStatuses = [
   'partially_refunded',
   'refunded',
   'disputed',
+  'dispute_lost',
 ] as const
 
 /** One-time purchases (license keys, downloads, physical goods, marketplace). */
@@ -96,3 +98,52 @@ export const payOrderItems = pgTable('pay_order_items', {
 
 export type PayOrder = typeof payOrders.$inferSelect
 export type PayCheckoutSession = typeof payCheckoutSessions.$inferSelect
+
+/* Step 1: one-time purchases and license keys */
+
+export const licenseStatuses = ['active', 'suspended', 'revoked'] as const
+
+/** One key per unit bought. Issued by the webhook, never by the success page. */
+export const payLicenseKeys = pgTable(
+  'pay_license_keys',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    key: text('key').notNull().unique(),
+    orderId: uuid('order_id')
+      .notNull()
+      .references(() => payOrders.id, { onDelete: 'cascade' }),
+    clerkUserId: text('clerk_user_id').notNull(),
+    /** The price lookup key, which maps to the product's settings in the catalog. */
+    lookupKey: text('lookup_key').notNull(),
+    productName: text('product_name').notNull(),
+    maxActivations: integer('max_activations').notNull(),
+    status: text('status', { enum: licenseStatuses }).notNull().default('active'),
+    /** Why the status last changed, shown to the buyer. */
+    statusReason: text('status_reason'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('pay_license_keys_user_idx').on(table.clerkUserId)],
+)
+
+/** Devices that have activated a key. The validate API enforces `maxActivations`. */
+export const payLicenseActivations = pgTable(
+  'pay_license_activations',
+  {
+    id: serial('id').primaryKey(),
+    licenseKeyId: uuid('license_key_id')
+      .notNull()
+      .references(() => payLicenseKeys.id, { onDelete: 'cascade' }),
+    machineId: text('machine_id').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('pay_license_activations_key_machine_idx').on(
+      table.licenseKeyId,
+      table.machineId,
+    ),
+  ],
+)
+
+export type PayLicenseKey = typeof payLicenseKeys.$inferSelect

@@ -32,6 +32,11 @@ export interface ModuleWebhookHandlers {
     ctx: WebhookContext & { fullyRefunded: boolean },
   ) => Promise<void>
   onOrderDisputed?: (order: PayOrder, ctx: WebhookContext) => Promise<void>
+  /** The bank decided the dispute: `won` means the money stays, `lost` means it went back to the buyer. */
+  onDisputeClosed?: (
+    order: PayOrder,
+    ctx: WebhookContext & { outcome: 'won' | 'lost' },
+  ) => Promise<void>
 }
 
 /** A handler for one raw event type, for modules that need more than checkout events. */

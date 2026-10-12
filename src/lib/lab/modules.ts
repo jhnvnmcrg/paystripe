@@ -37,7 +37,8 @@ export const labModules: LabModule[] = [
     name: 'One-time purchases and license keys',
     moneyFlow: 'Charged once. The webhook issues a license key.',
     examples: 'Tailwind UI, Raycast Pro, ebooks',
-    status: 'next',
+    status: 'ready',
+    to: '/stripe/license-keys',
   },
   {
     step: 2,
@@ -45,7 +46,7 @@ export const labModules: LabModule[] = [
     name: 'Digital downloads',
     moneyFlow: 'A cart is paid once. Buyers get expiring download links.',
     examples: 'UI kits, design templates, PDF guides',
-    status: 'planned',
+    status: 'next',
   },
   {
     step: 3,
