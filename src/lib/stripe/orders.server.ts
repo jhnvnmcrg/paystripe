@@ -9,7 +9,15 @@ import type { LabCheckoutOptions } from '#/lib/stripe/checkout.server'
 import { createLabCheckoutSession } from '#/lib/stripe/checkout.server'
 import { getStripe } from '#/lib/stripe/client.server'
 
-type StartOrderOptions = Omit<LabCheckoutOptions, 'refId' | 'idempotencyKey'>
+type StartOrderOptions = Omit<LabCheckoutOptions, 'refId' | 'idempotencyKey'> & {
+  /**
+   * Runs in the same transaction that creates the pending order, before Stripe
+   * is called (the shop holds stock here). Throwing rolls back the order too.
+   */
+  reserve?: (tx: DbTransaction, orderId: string) => Promise<void>
+  /** Undoes `reserve` if the Checkout Session can't be created. */
+  release?: (orderId: string) => Promise<void>
+}
 
 /**
  * Starts a one-time purchase: a pending order first, then its Checkout Session.
@@ -18,14 +26,20 @@ type StartOrderOptions = Omit<LabCheckoutOptions, 'refId' | 'idempotencyKey'>
 export async function startOrderCheckout(
   options: StartOrderOptions,
 ): Promise<{ orderId: string; url: string }> {
-  const [order] = await db
-    .insert(payOrders)
-    .values({ module: options.module, clerkUserId: options.clerkUserId })
-    .returning({ id: payOrders.id })
+  const { reserve, release, ...checkoutOptions } = options
+
+  const order = await db.transaction(async (tx) => {
+    const [created] = await tx
+      .insert(payOrders)
+      .values({ module: options.module, clerkUserId: options.clerkUserId })
+      .returning({ id: payOrders.id })
+    await reserve?.(tx, created.id)
+    return created
+  })
 
   try {
     const session = await createLabCheckoutSession({
-      ...options,
+      ...checkoutOptions,
       refId: order.id,
       idempotencyKey: `order:${order.id}`,
     })
@@ -45,6 +59,7 @@ export async function startOrderCheckout(
 
     return { orderId: order.id, url: session.url }
   } catch (error) {
+    await release?.(order.id)
     await db
       .update(payOrders)
       .set({ status: 'failed', updatedAt: new Date() })
@@ -102,7 +117,12 @@ export async function markOrderPaid(
       amountDiscount: session.total_details?.amount_discount ?? 0,
       amountShipping: session.total_details?.amount_shipping ?? 0,
       amountTotal: session.amount_total,
-      shipping: session.collected_information?.shipping_details ?? null,
+      shipping: session.collected_information?.shipping_details
+        ? {
+            ...session.collected_information.shipping_details,
+            phone: session.customer_details?.phone ?? null,
+          }
+        : null,
       paidAt: new Date(),
       updatedAt: new Date(),
     })

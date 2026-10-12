@@ -22,6 +22,13 @@
       "when": 1791768356806,
       "tag": "0002_wonderful_jigsaw",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791770269077,
+      "tag": "0003_shiny_true_believers",
+      "breakpoints": true
     }
   ]
 }
