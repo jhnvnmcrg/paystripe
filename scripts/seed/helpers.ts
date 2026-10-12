@@ -115,6 +115,42 @@ export async function ensurePromotionCode(
 }
 
 /**
+ * Shipping rates can't take a fixed ID, so they're found by `metadata.lab_key`.
+ * Rates can't be edited either: a changed amount archives the old rate and creates a new one.
+ */
+export async function ensureShippingRate(spec: {
+  key: string
+  displayName: string
+  amount: number
+  minDays: number
+  maxDays: number
+}): Promise<Stripe.ShippingRate> {
+  const stripe = getStripe()
+  const { data } = await stripe.shippingRates.list({ active: true, limit: 100 })
+  const existing = data.find((rate) => rate.metadata?.lab_key === spec.key)
+
+  if (existing && existing.fixed_amount?.amount === spec.amount && existing.display_name === spec.displayName) {
+    console.log(`  unchanged shipping rate ${spec.key}`)
+    return existing
+  }
+  if (existing) {
+    await stripe.shippingRates.update(existing.id, { active: false })
+  }
+
+  console.log(`  ${existing ? 'replaced' : 'created'} shipping rate ${spec.key}`)
+  return stripe.shippingRates.create({
+    display_name: spec.displayName,
+    type: 'fixed_amount',
+    fixed_amount: { amount: spec.amount, currency: 'usd' },
+    delivery_estimate: {
+      minimum: { unit: 'business_day', value: spec.minDays },
+      maximum: { unit: 'business_day', value: spec.maxDays },
+    },
+    metadata: { lab_key: spec.key },
+  })
+}
+
+/**
  * Finds the price by lookup key, or creates it. Prices can't be edited, so a
  * changed spec creates a new price, moves the lookup key over and archives the old one.
  */

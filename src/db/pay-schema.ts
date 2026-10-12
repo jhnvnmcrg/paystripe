@@ -1,5 +1,7 @@
+import { sql } from 'drizzle-orm'
 import {
   boolean,
+  check,
   index,
   integer,
   jsonb,
@@ -43,6 +45,22 @@ export const payCheckoutSessions = pgTable('pay_checkout_sessions', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
+/** The shipping address collected by Checkout, as stored on an order. */
+export interface StoredShipping {
+  name: string
+  address: {
+    line1: string | null
+    line2: string | null
+    city: string | null
+    state: string | null
+    postal_code: string | null
+    country: string | null
+  }
+  phone?: string | null
+  /** The shipping rate the buyer chose, added by the shop's webhook. */
+  method?: string | null
+}
+
 export const orderStatuses = [
   'pending',
   'paid',
@@ -71,7 +89,7 @@ export const payOrders = pgTable(
     amountTotal: integer('amount_total'),
     amountRefunded: integer('amount_refunded').notNull().default(0),
     applicationFeeAmount: integer('application_fee_amount'),
-    shipping: jsonb('shipping'),
+    shipping: jsonb('shipping').$type<StoredShipping>(),
     /** Module-defined, for example `unfulfilled` or `shipped`. */
     fulfillmentStatus: text('fulfillment_status'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
@@ -183,3 +201,59 @@ export const payDownloadGrants = pgTable(
 )
 
 export type PayDownloadGrant = typeof payDownloadGrants.$inferSelect
+
+/* Step 3: physical goods with inventory */
+
+/**
+ * Stock per SKU. `onHand` counts every unit on the shelf, including units held
+ * by open checkouts; `reserved` is that held part. Available = onHand - reserved.
+ */
+export const paySkus = pgTable(
+  'pay_skus',
+  {
+    sku: text('sku').primaryKey(),
+    onHand: integer('on_hand').notNull(),
+    reserved: integer('reserved').notNull().default(0),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    // The database refuses to oversell, even if application code gets it wrong.
+    check('pay_skus_stock_ok', sql`${table.reserved} >= 0 AND ${table.reserved} <= ${table.onHand}`),
+  ],
+)
+
+export const reservationStatuses = ['held', 'converted', 'released', 'restocked'] as const
+
+/**
+ * Units an order holds while its buyer is on Stripe's page. Converted into a
+ * sale when the webhook confirms payment, released when checkout expires or fails.
+ */
+export const payReservations = pgTable(
+  'pay_reservations',
+  {
+    id: serial('id').primaryKey(),
+    orderId: uuid('order_id')
+      .notNull()
+      .references(() => payOrders.id, { onDelete: 'cascade' }),
+    sku: text('sku')
+      .notNull()
+      .references(() => paySkus.sku),
+    quantity: integer('quantity').notNull(),
+    status: text('status', { enum: reservationStatuses }).notNull().default('held'),
+    /** When the hold lapses: the Checkout Session's expires_at. */
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex('pay_reservations_order_sku_idx').on(table.orderId, table.sku)],
+)
+
+/** Tracking details once a paid order has been handed to a carrier. */
+export const payShipments = pgTable('pay_shipments', {
+  orderId: uuid('order_id')
+    .primaryKey()
+    .references(() => payOrders.id, { onDelete: 'cascade' }),
+  carrier: text('carrier').notNull(),
+  trackingNumber: text('tracking_number').notNull(),
+  shippedAt: timestamp('shipped_at', { withTimezone: true }).notNull().defaultNow(),
+})

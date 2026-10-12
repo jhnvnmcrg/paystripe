@@ -1,5 +1,6 @@
 import { downloadWebhooks } from '#/lib/lab/downloads/webhooks.server'
 import { licenseKeyWebhooks } from '#/lib/lab/license-keys/webhooks.server'
+import { shopWebhooks } from '#/lib/lab/shop/webhooks.server'
 import type { LabModuleSlug } from '#/lib/lab/modules'
 import type { ModuleWebhookHandlers, RegisteredEventHandler } from './types'
 
@@ -10,6 +11,7 @@ import type { ModuleWebhookHandlers, RegisteredEventHandler } from './types'
 export const moduleHandlers: Partial<Record<LabModuleSlug, ModuleWebhookHandlers>> = {
   'license-keys': licenseKeyWebhooks,
   downloads: downloadWebhooks,
+  shop: shopWebhooks,
 }
 
 /** Raw event handlers for modules that need events beyond Checkout (subscriptions, invoices, ...). */

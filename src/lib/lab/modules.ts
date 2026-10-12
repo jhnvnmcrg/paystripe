@@ -55,7 +55,8 @@ export const labModules: LabModule[] = [
     name: 'Physical goods with inventory',
     moneyFlow: 'Stock is held during checkout, then the order ships.',
     examples: 'Merch stores, small product shops',
-    status: 'next',
+    status: 'ready',
+    to: '/stripe/shop',
   },
   {
     step: 4,
@@ -63,7 +64,7 @@ export const labModules: LabModule[] = [
     name: 'SaaS subscriptions',
     moneyFlow: 'Billed monthly or yearly until the customer cancels.',
     examples: 'Netflix, Canva, Notion, Figma',
-    status: 'planned',
+    status: 'next',
   },
   {
     step: 5,
