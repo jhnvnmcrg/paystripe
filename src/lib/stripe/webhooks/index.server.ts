@@ -2,10 +2,15 @@ import * as Sentry from '@sentry/tanstackstart-react'
 import { eq } from 'drizzle-orm'
 import type Stripe from 'stripe'
 import { db } from '#/db/index'
-import { payCheckoutSessions, payCustomers, payStripeEvents } from '#/db/pay-schema'
+import { payCustomers, payStripeEvents } from '#/db/pay-schema'
 import { isLabModuleSlug } from '#/lib/lab/modules'
 import { getStripe, getWebhookSecret } from '#/lib/stripe/client.server'
-import { handleChargeRefunded, handleDisputeCreated } from './charges.server'
+import {
+  handleChargeRefunded,
+  handleDisputeClosed,
+  handleDisputeCreated,
+} from './charges.server'
+import { findCheckoutRoute, fulfillPaidCheckout } from './checkout-routing.server'
 import { extraEventHandlers, moduleHandlers } from './modules.server'
 import type { EventOf, RegisteredEventHandler, WebhookContext } from './types'
 import { onEvent } from './types'
@@ -25,9 +30,7 @@ async function routeCheckoutEvent(
   { tx }: WebhookContext,
 ): Promise<void> {
   const sessionId = event.data.object.id
-  const checkout = await tx.query.payCheckoutSessions.findFirst({
-    where: eq(payCheckoutSessions.sessionId, sessionId),
-  })
+  const checkout = await findCheckoutRoute(tx, sessionId)
 
   if (!checkout) {
     if (event.data.object.metadata?.lab_module) {
@@ -52,11 +55,9 @@ async function routeCheckoutEvent(
   switch (event.type) {
     case 'checkout.session.completed':
     case 'checkout.session.async_payment_succeeded':
-      // 'unpaid' means a delayed payment method is still processing:
-      // wait for async_payment_succeeded instead of granting anything now.
-      if (session.payment_status !== 'unpaid') {
-        await handlers.onCheckoutPaid?.(session, ctx)
-      }
+      // Skips 'unpaid' sessions: a delayed payment method is still processing,
+      // so wait for async_payment_succeeded instead of granting anything now.
+      await fulfillPaidCheckout(tx, session, checkout)
       break
     case 'checkout.session.async_payment_failed':
       await handlers.onCheckoutPaymentFailed?.(session, ctx)
@@ -84,6 +85,7 @@ const coreHandlers: RegisteredEventHandler[] = [
   onEvent('checkout.session.expired', routeCheckoutEvent),
   onEvent('charge.refunded', handleChargeRefunded),
   onEvent('charge.dispute.created', handleDisputeCreated),
+  onEvent('charge.dispute.closed', handleDisputeClosed),
   onEvent('customer.deleted', forgetDeletedCustomer),
 ]
 

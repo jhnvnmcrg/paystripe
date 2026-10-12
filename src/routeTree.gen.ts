@@ -26,6 +26,7 @@ import { Route as DemoStoreRouteImport } from './routes/demo/store'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as StripeIndexRouteImport } from './routes/stripe/index'
+import { Route as ApiLicenseValidateRouteImport } from './routes/api/license/validate'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 import { Route as DemoApiMcpTodosRouteImport } from './routes/demo/api.mcp-todos'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
@@ -33,6 +34,8 @@ import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoGuitarsIndexRouteImport } from './routes/demo/guitars/index'
 import { Route as DemoGuitarsGuitarIdRouteImport } from './routes/demo/guitars/$guitarId'
 import { Route as DemoSentryTestingRouteImport } from './routes/demo/sentry.testing'
+import { Route as StripeLicenseKeysIndexRouteImport } from './routes/stripe/license-keys/index'
+import { Route as StripeLicenseKeysSuccessRouteImport } from './routes/stripe/license-keys/success'
 import { Route as DemoApiAiChatRouteImport } from './routes/demo/api.ai.chat'
 import { Route as DemoApiAiImageRouteImport } from './routes/demo/api.ai.image'
 import { Route as DemoApiAiStructuredRouteImport } from './routes/demo/api.ai.structured'
@@ -124,6 +127,11 @@ const StripeIndexRoute = StripeIndexRouteImport.update({
   path: '/stripe/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiLicenseValidateRoute = ApiLicenseValidateRouteImport.update({
+  id: '/api/license/validate',
+  path: '/api/license/validate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
   id: '/api/stripe/webhook',
   path: '/api/stripe/webhook',
@@ -159,6 +167,17 @@ const DemoSentryTestingRoute = DemoSentryTestingRouteImport.update({
   path: '/demo/sentry/testing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StripeLicenseKeysIndexRoute = StripeLicenseKeysIndexRouteImport.update({
+  id: '/stripe/license-keys/',
+  path: '/stripe/license-keys/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StripeLicenseKeysSuccessRoute =
+  StripeLicenseKeysSuccessRouteImport.update({
+    id: '/stripe/license-keys/success',
+    path: '/stripe/license-keys/success',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DemoApiAiChatRoute = DemoApiAiChatRouteImport.update({
   id: '/demo/api/ai/chat',
   path: '/demo/api/ai/chat',
@@ -203,13 +222,16 @@ export interface FileRoutesByFullPath {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/stripe/': typeof StripeIndexRoute
+  '/api/license/validate': typeof ApiLicenseValidateRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/demo/api/mcp-todos': typeof DemoApiMcpTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/guitars/$guitarId': typeof DemoGuitarsGuitarIdRoute
   '/demo/sentry/testing': typeof DemoSentryTestingRoute
+  '/stripe/license-keys/success': typeof StripeLicenseKeysSuccessRoute
   '/demo/guitars/': typeof DemoGuitarsIndexRoute
+  '/stripe/license-keys/': typeof StripeLicenseKeysIndexRoute
   '/demo/api/ai/chat': typeof DemoApiAiChatRoute
   '/demo/api/ai/image': typeof DemoApiAiImageRoute
   '/demo/api/ai/structured': typeof DemoApiAiStructuredRoute
@@ -234,13 +256,16 @@ export interface FileRoutesByTo {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/stripe': typeof StripeIndexRoute
+  '/api/license/validate': typeof ApiLicenseValidateRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/demo/api/mcp-todos': typeof DemoApiMcpTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/guitars/$guitarId': typeof DemoGuitarsGuitarIdRoute
   '/demo/sentry/testing': typeof DemoSentryTestingRoute
+  '/stripe/license-keys/success': typeof StripeLicenseKeysSuccessRoute
   '/demo/guitars': typeof DemoGuitarsIndexRoute
+  '/stripe/license-keys': typeof StripeLicenseKeysIndexRoute
   '/demo/api/ai/chat': typeof DemoApiAiChatRoute
   '/demo/api/ai/image': typeof DemoApiAiImageRoute
   '/demo/api/ai/structured': typeof DemoApiAiStructuredRoute
@@ -266,13 +291,16 @@ export interface FileRoutesById {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/stripe/': typeof StripeIndexRoute
+  '/api/license/validate': typeof ApiLicenseValidateRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/demo/api/mcp-todos': typeof DemoApiMcpTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/guitars/$guitarId': typeof DemoGuitarsGuitarIdRoute
   '/demo/sentry/testing': typeof DemoSentryTestingRoute
+  '/stripe/license-keys/success': typeof StripeLicenseKeysSuccessRoute
   '/demo/guitars/': typeof DemoGuitarsIndexRoute
+  '/stripe/license-keys/': typeof StripeLicenseKeysIndexRoute
   '/demo/api/ai/chat': typeof DemoApiAiChatRoute
   '/demo/api/ai/image': typeof DemoApiAiImageRoute
   '/demo/api/ai/structured': typeof DemoApiAiStructuredRoute
@@ -299,13 +327,16 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/stripe/'
+    | '/api/license/validate'
     | '/api/stripe/webhook'
     | '/demo/api/mcp-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/guitars/$guitarId'
     | '/demo/sentry/testing'
+    | '/stripe/license-keys/success'
     | '/demo/guitars/'
+    | '/stripe/license-keys/'
     | '/demo/api/ai/chat'
     | '/demo/api/ai/image'
     | '/demo/api/ai/structured'
@@ -330,13 +361,16 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/stripe'
+    | '/api/license/validate'
     | '/api/stripe/webhook'
     | '/demo/api/mcp-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/guitars/$guitarId'
     | '/demo/sentry/testing'
+    | '/stripe/license-keys/success'
     | '/demo/guitars'
+    | '/stripe/license-keys'
     | '/demo/api/ai/chat'
     | '/demo/api/ai/image'
     | '/demo/api/ai/structured'
@@ -361,13 +395,16 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/stripe/'
+    | '/api/license/validate'
     | '/api/stripe/webhook'
     | '/demo/api/mcp-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/guitars/$guitarId'
     | '/demo/sentry/testing'
+    | '/stripe/license-keys/success'
     | '/demo/guitars/'
+    | '/stripe/license-keys/'
     | '/demo/api/ai/chat'
     | '/demo/api/ai/image'
     | '/demo/api/ai/structured'
@@ -393,13 +430,16 @@ export interface RootRouteChildren {
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   StripeIndexRoute: typeof StripeIndexRoute
+  ApiLicenseValidateRoute: typeof ApiLicenseValidateRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   DemoApiMcpTodosRoute: typeof DemoApiMcpTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
   DemoGuitarsGuitarIdRoute: typeof DemoGuitarsGuitarIdRoute
   DemoSentryTestingRoute: typeof DemoSentryTestingRoute
+  StripeLicenseKeysSuccessRoute: typeof StripeLicenseKeysSuccessRoute
   DemoGuitarsIndexRoute: typeof DemoGuitarsIndexRoute
+  StripeLicenseKeysIndexRoute: typeof StripeLicenseKeysIndexRoute
   DemoApiAiChatRoute: typeof DemoApiAiChatRoute
   DemoApiAiImageRoute: typeof DemoApiAiImageRoute
   DemoApiAiStructuredRoute: typeof DemoApiAiStructuredRoute
@@ -528,6 +568,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StripeIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/license/validate': {
+      id: '/api/license/validate'
+      path: '/api/license/validate'
+      fullPath: '/api/license/validate'
+      preLoaderRoute: typeof ApiLicenseValidateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/stripe/webhook': {
       id: '/api/stripe/webhook'
       path: '/api/stripe/webhook'
@@ -575,6 +622,20 @@ declare module '@tanstack/react-router' {
       path: '/demo/sentry/testing'
       fullPath: '/demo/sentry/testing'
       preLoaderRoute: typeof DemoSentryTestingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stripe/license-keys/': {
+      id: '/stripe/license-keys/'
+      path: '/stripe/license-keys'
+      fullPath: '/stripe/license-keys/'
+      preLoaderRoute: typeof StripeLicenseKeysIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stripe/license-keys/success': {
+      id: '/stripe/license-keys/success'
+      path: '/stripe/license-keys/success'
+      fullPath: '/stripe/license-keys/success'
+      preLoaderRoute: typeof StripeLicenseKeysSuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/api/ai/chat': {
@@ -633,13 +694,16 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   StripeIndexRoute: StripeIndexRoute,
+  ApiLicenseValidateRoute: ApiLicenseValidateRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   DemoApiMcpTodosRoute: DemoApiMcpTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
   DemoFormSimpleRoute: DemoFormSimpleRoute,
   DemoGuitarsGuitarIdRoute: DemoGuitarsGuitarIdRoute,
   DemoSentryTestingRoute: DemoSentryTestingRoute,
+  StripeLicenseKeysSuccessRoute: StripeLicenseKeysSuccessRoute,
   DemoGuitarsIndexRoute: DemoGuitarsIndexRoute,
+  StripeLicenseKeysIndexRoute: StripeLicenseKeysIndexRoute,
   DemoApiAiChatRoute: DemoApiAiChatRoute,
   DemoApiAiImageRoute: DemoApiAiImageRoute,
   DemoApiAiStructuredRoute: DemoApiAiStructuredRoute,
