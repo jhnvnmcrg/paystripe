@@ -346,6 +346,23 @@ export const payApiKeys = pgTable('pay_api_keys', {
   lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
 })
 
+/* Step 6: freemium with add-ons */
+
+/**
+ * The freemium app's own data. Free users have no Stripe objects at all; their
+ * limit (3 projects) is enforced here, against whatever plan the user has.
+ */
+export const payFreemiumProjects = pgTable(
+  'pay_freemium_projects',
+  {
+    id: serial('id').primaryKey(),
+    clerkUserId: text('clerk_user_id').notNull(),
+    name: text('name').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('pay_freemium_projects_user_idx').on(table.clerkUserId)],
+)
+
 /** Tracking details once a paid order has been handed to a carrier. */
 export const payShipments = pgTable('pay_shipments', {
   orderId: uuid('order_id')
