@@ -29,7 +29,7 @@ import {
   startSaasTimeTravel,
 } from '#/lib/lab/saas/saas.functions'
 import type { TimeTravelView } from '#/lib/lab/saas/saas.server'
-import { NextDate } from './SubscriptionPanel'
+import NextBillingDate from '#/components/stripe/NextBillingDate'
 
 interface TimeTravelPanelProps {
   run: TimeTravelView | null
@@ -184,7 +184,7 @@ function RunControls({
             <SubscriptionStatusBadge status={run.subscription.status} />
           </div>
           <span className="text-sm text-ink-soft">
-            <NextDate subscription={run.subscription} />
+            <NextBillingDate subscription={run.subscription} />
           </span>
         </div>
       ) : (

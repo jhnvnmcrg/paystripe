@@ -2,7 +2,8 @@ import { and, eq } from 'drizzle-orm'
 import { db } from '#/db/index'
 import type { PaySubscription } from '#/db/pay-schema'
 import { paySubscriptions, payTestClockRuns } from '#/db/pay-schema'
-import { getAppUrl } from '#/lib/stripe/checkout.server'
+import type { InvoiceView } from '#/lib/stripe/billing.server'
+import { createPortalSession, listInvoices } from '#/lib/stripe/billing.server'
 import { getStripe } from '#/lib/stripe/client.server'
 import { getOrCreateStripeCustomer } from '#/lib/stripe/customers.server'
 import type { Access } from '#/lib/stripe/subscriptions.server'
@@ -51,34 +52,6 @@ export function toSubscriptionView(row: PaySubscription): SubscriptionView {
   }
 }
 
-export interface InvoiceView {
-  id: string
-  number: string | null
-  status: string | null
-  reason: string | null
-  amountDue: number
-  amountPaid: number
-  currency: string
-  created: string
-  hostedUrl: string | null
-}
-
-/** Invoices straight from Stripe: the record of every charge, renewal and failure. */
-export async function listInvoices(customerId: string): Promise<InvoiceView[]> {
-  const { data } = await getStripe().invoices.list({ customer: customerId, limit: 10 })
-  return data.map((invoice) => ({
-    id: invoice.id ?? '',
-    number: invoice.number,
-    status: invoice.status,
-    reason: invoice.billing_reason,
-    amountDue: invoice.amount_due,
-    amountPaid: invoice.amount_paid,
-    currency: invoice.currency,
-    created: new Date(invoice.created * 1000).toISOString(),
-    hostedUrl: invoice.hosted_invoice_url ?? null,
-  }))
-}
-
 /* ---------- the real subscription ---------- */
 
 export async function getRealSubscription(clerkUserId: string) {
@@ -103,18 +76,9 @@ export async function findPlanPrice(plan: SaasPlanKey, interval: BillingInterval
 
 /* ---------- Customer Portal ---------- */
 
-async function findPortalConfigurationId(): Promise<string> {
-  const { data } = await getStripe().billingPortal.configurations.list({ limit: 100 })
-  const configuration = data.find((candidate) => candidate.metadata?.lab_key === SAAS_PORTAL_KEY)
-  if (!configuration) {
-    throw new Error('The Customer Portal is not set up yet. Run npm run stripe:seed saas.')
-  }
-  return configuration.id
-}
-
 /**
- * A short-lived link to Stripe's hosted billing page for one customer.
- * Plan changes, card updates and cancellations made there come back as webhooks.
+ * A link to Stripe's hosted billing page, for the real customer or the
+ * time-travel one. Plan changes, card updates and cancellations come back as webhooks.
  */
 export async function createPortalLink(
   clerkUserId: string,
@@ -131,12 +95,11 @@ export async function createPortalLink(
     customerId = run.stripeCustomerId
   }
 
-  const session = await getStripe().billingPortal.sessions.create({
-    customer: customerId,
-    configuration: await findPortalConfigurationId(),
-    return_url: `${getAppUrl()}/stripe/saas`,
+  return createPortalSession({
+    customerId,
+    configurationKey: SAAS_PORTAL_KEY,
+    returnPath: '/stripe/saas',
   })
-  return session.url
 }
 
 /* ---------- time travel (test clocks) ---------- */

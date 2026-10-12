@@ -151,6 +151,43 @@ export async function ensureShippingRate(spec: {
 }
 
 /**
+ * A feature's lookup key can never be reused, even after archiving, so always
+ * look first: return the active one, revive an archived one, or create it.
+ */
+export async function ensureFeature(lookupKey: string, name: string): Promise<Stripe.Entitlements.Feature> {
+  const stripe = getStripe()
+  const {
+    data: [active],
+  } = await stripe.entitlements.features.list({ lookup_key: lookupKey, limit: 1 })
+  if (active) {
+    console.log(`  unchanged feature ${lookupKey}`)
+    return active
+  }
+  const {
+    data: [archived],
+  } = await stripe.entitlements.features.list({ lookup_key: lookupKey, archived: true, limit: 1 })
+  if (archived) {
+    console.log(`  revived feature ${lookupKey}`)
+    return stripe.entitlements.features.update(archived.id, { active: true })
+  }
+  console.log(`  created feature ${lookupKey}`)
+  return stripe.entitlements.features.create({ lookup_key: lookupKey, name })
+}
+
+/** Attaches features to a product, skipping any it already has. */
+export async function attachFeatures(productId: string, featureIds: string[]): Promise<void> {
+  const stripe = getStripe()
+  const { data: attached } = await stripe.products.listFeatures(productId, { limit: 100 })
+  const have = new Set(attached.map((item) => item.entitlement_feature.id))
+  for (const featureId of featureIds) {
+    if (!have.has(featureId)) {
+      await stripe.products.createFeature(productId, { entitlement_feature: featureId })
+      console.log(`  attached ${featureId} to ${productId}`)
+    }
+  }
+}
+
+/**
  * Portal configurations can't take a fixed ID either, so they're found by
  * `metadata.lab_key`. Unlike prices, they can be updated in place.
  */

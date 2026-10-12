@@ -6,6 +6,7 @@ import {
   integer,
   jsonb,
   pgTable,
+  primaryKey,
   serial,
   text,
   timestamp,
@@ -315,6 +316,35 @@ export const payTestClockRuns = pgTable(
 )
 
 export type PayTestClockRun = typeof payTestClockRuns.$inferSelect
+
+/* Step 5: subscription-gated web tools */
+
+/**
+ * The features a user's Stripe Customer is entitled to right now, cached from
+ * Stripe's Entitlements API. Rewritten whenever Stripe reports a change.
+ */
+export const payEntitlements = pgTable(
+  'pay_entitlements',
+  {
+    clerkUserId: text('clerk_user_id').notNull(),
+    /** The Stripe feature's lookup key, such as `bulk_export`. */
+    featureLookupKey: text('feature_lookup_key').notNull(),
+    stripeCustomerId: text('stripe_customer_id').notNull(),
+    syncedAt: timestamp('synced_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.clerkUserId, table.featureLookupKey] })],
+)
+
+/** API keys for the tools' API. Only a hash is stored; the key itself is shown once. */
+export const payApiKeys = pgTable('pay_api_keys', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  clerkUserId: text('clerk_user_id').notNull().unique(),
+  /** The first characters, so the user can recognise the key later. */
+  prefix: text('prefix').notNull(),
+  keyHash: text('key_hash').notNull().unique(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
+})
 
 /** Tracking details once a paid order has been handed to a carrier. */
 export const payShipments = pgTable('pay_shipments', {

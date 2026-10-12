@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import SubscriptionStatusBadge from '#/components/stripe/SubscriptionStatusBadge'
-import { NextDate } from '#/components/stripe/saas/SubscriptionPanel'
+import NextBillingDate from '#/components/stripe/NextBillingDate'
 import { Alert, AlertDescription, AlertTitle } from '#/components/ui/alert'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/components/ui/card'
@@ -146,7 +146,7 @@ function CheckoutResult({ sessionId }: { sessionId: string }) {
       </CardHeader>
       <CardContent className="flex flex-col gap-4 text-sm">
         <p className="m-0 text-ink-soft">
-          <NextDate subscription={subscription} />
+          <NextBillingDate subscription={subscription} />
         </p>
         <Button asChild variant="outline" className="self-start">
           <Link to="/stripe/saas">See your subscription</Link>

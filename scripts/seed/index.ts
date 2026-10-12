@@ -3,6 +3,7 @@ import { seedDownloads } from './downloads.ts'
 import { seedLicenseKeys } from './license-keys.ts'
 import { seedSaas } from './saas.ts'
 import { seedShop } from './shop.ts'
+import { seedWebTools } from './web-tools.ts'
 
 export interface ModuleSeed {
   module: LabModuleSlug
@@ -15,4 +16,5 @@ export const moduleSeeds: ModuleSeed[] = [
   { module: 'downloads', run: seedDownloads },
   { module: 'shop', run: seedShop },
   { module: 'saas', run: seedSaas },
+  { module: 'web-tools', run: seedWebTools },
 ]
