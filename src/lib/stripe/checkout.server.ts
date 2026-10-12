@@ -8,6 +8,37 @@ import { getOrCreateStripeCustomer } from '#/lib/stripe/customers.server'
 /** Fields the wrapper fills in itself. */
 type ManagedField = 'customer' | 'success_url' | 'cancel_url' | 'integration_identifier'
 
+/**
+ * Tags each module's Checkout Sessions in the Dashboard so flows can be told
+ * apart and compared. The 8-letter suffix keeps the labels unique to this lab.
+ */
+const integrationIdentifiers: Record<LabModuleSlug, string> = {
+  'license-keys': 'lab-license-keys-qmzvrtkd',
+  downloads: 'lab-downloads-hwjpexna',
+  shop: 'lab-shop-tbkyrfgu',
+  saas: 'lab-saas-nclqoxwe',
+  'web-tools': 'lab-web-tools-vydmsahk',
+  freemium: 'lab-freemium-pgruzlct',
+  membership: 'lab-membership-xekfbnwo',
+  usage: 'lab-usage-rjtqmyhd',
+  credits: 'lab-credits-zuowkfbi',
+  marketplace: 'lab-marketplace-elsgdvqa',
+}
+
+/**
+ * Checkout Studio settings, applied as defaults. A module's own `params` come
+ * after them, so a module can override one (downloads turns on promotion codes).
+ */
+const studioDefaults = {
+  ui_mode: 'hosted_page',
+  billing_address_collection: 'auto',
+  phone_number_collection: { enabled: false },
+  automatic_tax: { enabled: false },
+  allow_promotion_codes: false,
+  // The lab sends buyers to Checkout in a normal browser tab, not a mobile app's web view.
+  origin_context: 'web',
+} satisfies Partial<Stripe.Checkout.SessionCreateParams>
+
 export interface LabCheckoutOptions {
   module: LabModuleSlug
   clerkUserId: string
@@ -40,22 +71,17 @@ export async function createLabCheckoutSession(
 
   const session = await getStripe().checkout.sessions.create(
     {
-      ...options.params,
-      customer,
-      success_url: `${appUrl}${options.successPath}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}${options.cancelPath}`,
-      // Checkout Studio settings. They come after the spread so a module can't override them.
-      ui_mode: 'hosted_page',
-      billing_address_collection: 'auto',
-      phone_number_collection: { enabled: false },
-      automatic_tax: { enabled: false },
-      allow_promotion_codes: false,
+      ...studioDefaults,
       // Stripe rejects submit_type in setup mode.
       ...(options.params.mode !== 'setup' ? { submit_type: 'auto' } : {}),
       // Stripe only accepts payment_method_collection in subscription mode.
       ...(options.params.mode === 'subscription' ? { payment_method_collection: 'always' } : {}),
-      integration_identifier: 'hosted_mobile_app_0002',
-      origin_context: 'mobile_app',
+      // The module's choices win over the defaults above.
+      ...options.params,
+      customer,
+      success_url: `${appUrl}${options.successPath}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}${options.cancelPath}`,
+      integration_identifier: integrationIdentifiers[options.module],
       metadata: {
         ...options.params.metadata,
         // Fallback only: events are routed through pay_checkout_sessions.

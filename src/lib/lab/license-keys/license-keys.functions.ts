@@ -4,16 +4,12 @@ import { setResponseHeader } from '@tanstack/react-start/server'
 import { z } from 'zod'
 import { getOptionalUserId, requireUserId } from '#/lib/auth.server'
 import { getStripe } from '#/lib/stripe/client.server'
-import { startOrderCheckout } from '#/lib/stripe/orders.server'
+import { findOwnOrder, startOrderCheckout } from '#/lib/stripe/orders.server'
+import { requestRefund, resolveTestDispute } from '#/lib/stripe/seller-actions.server'
 import { findLicenseProduct, licenseProducts } from './catalog'
-import {
-  clearActivations,
-  findOwnLicenseOrder,
-  getLicenseCheckoutResult,
-  listLicenseOrders,
-} from './licenses.server'
+import { clearActivations, getLicenseCheckoutResult, listLicenseOrders } from './licenses.server'
 
-const MODULE = 'license-keys'
+const MODULE = 'license-keys' as const
 
 export interface LicenseProductOffer {
   lookupKey: string
@@ -138,24 +134,7 @@ export const refundLicenseOrder = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     return Sentry.startSpan({ name: 'refundLicenseOrder' }, async () => {
       const userId = await requireUserId()
-      const order = await findOwnLicenseOrder(userId, data.orderId)
-      if (!order.paymentIntentId || !['paid', 'partially_refunded'].includes(order.status)) {
-        throw new Error('Only paid orders can be refunded.')
-      }
-      const remaining = (order.amountTotal ?? 0) - order.amountRefunded
-      if (data.amount !== undefined && data.amount > remaining) {
-        throw new Error('That is more than is left to refund.')
-      }
-
-      // Keyed to the order's refund state, so a double-click can't refund twice.
-      await getStripe().refunds.create(
-        {
-          payment_intent: order.paymentIntentId,
-          amount: data.amount,
-          metadata: { lab_module: MODULE, order_id: order.id },
-        },
-        { idempotencyKey: `refund:${order.id}:${order.amountRefunded}:${data.amount ?? 'rest'}` },
-      )
+      await requestRefund(await findOwnOrder(userId, MODULE, data.orderId), data.amount)
       return { requested: true }
     })
   })
@@ -170,25 +149,7 @@ export const resolveLicenseDispute = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     return Sentry.startSpan({ name: 'resolveLicenseDispute' }, async () => {
       const userId = await requireUserId()
-      const order = await findOwnLicenseOrder(userId, data.orderId)
-      if (order.status !== 'disputed' || !order.paymentIntentId) {
-        throw new Error('This order has no open dispute.')
-      }
-
-      const stripe = getStripe()
-      const {
-        data: [dispute],
-      } = await stripe.disputes.list({ payment_intent: order.paymentIntentId, limit: 1 })
-      if (!dispute) {
-        throw new Error('Stripe has not opened the dispute yet. Try again in a few seconds.')
-      }
-
-      await stripe.disputes.update(dispute.id, {
-        evidence: {
-          uncategorized_text: data.outcome === 'won' ? 'winning_evidence' : 'losing_evidence',
-        },
-        submit: true,
-      })
+      await resolveTestDispute(await findOwnOrder(userId, MODULE, data.orderId), data.outcome)
       return { submitted: true }
     })
   })

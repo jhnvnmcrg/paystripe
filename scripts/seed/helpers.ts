@@ -76,6 +76,44 @@ function priceMatches(price: Stripe.Price, spec: PriceSpec, productId: string): 
   )
 }
 
+/** Creates a coupon with a fixed ID. Coupons can't be edited, so an existing one is left as is. */
+export async function ensureCoupon(
+  params: Stripe.CouponCreateParams & { id: string },
+): Promise<Stripe.Coupon> {
+  const stripe = getStripe()
+  try {
+    const existing = await stripe.coupons.retrieve(params.id)
+    console.log(`  unchanged coupon ${params.id}`)
+    return existing
+  } catch (error) {
+    if (!isMissingResource(error)) {
+      throw error
+    }
+    console.log(`  created coupon ${params.id}`)
+    return stripe.coupons.create(params)
+  }
+}
+
+/** Creates the customer-facing code for a coupon, unless an active one already exists. */
+export async function ensurePromotionCode(
+  code: string,
+  couponId: string,
+): Promise<Stripe.PromotionCode> {
+  const stripe = getStripe()
+  const {
+    data: [existing],
+  } = await stripe.promotionCodes.list({ code, active: true, limit: 1 })
+  if (existing) {
+    console.log(`  unchanged promotion code ${code}`)
+    return existing
+  }
+  console.log(`  created promotion code ${code}`)
+  return stripe.promotionCodes.create({
+    code,
+    promotion: { type: 'coupon', coupon: couponId },
+  })
+}
+
 /**
  * Finds the price by lookup key, or creates it. Prices can't be edited, so a
  * changed spec creates a new price, moves the lookup key over and archives the old one.

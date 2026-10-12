@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import CopyButton from '#/components/stripe/CopyButton'
-import LocalTime from '#/components/stripe/LocalTime'
-import OrderStatusBadge from '#/components/stripe/OrderStatusBadge'
+import OrderHeading from '#/components/stripe/OrderHeading'
+import SellerActions from '#/components/stripe/SellerActions'
 import { Alert, AlertDescription } from '#/components/ui/alert'
 import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/components/ui/card'
 import { Spinner } from '#/components/ui/spinner'
-import { formatMoney } from '#/lib/lab/format'
 import {
   clearLicenseDevices,
   refundLicenseOrder,
@@ -76,43 +75,10 @@ export default function LicenseOrders({
         ) : (
           <ol className="m-0 flex list-none flex-col divide-y divide-line p-0">
             {orders.map((order) => {
-              const remaining = (order.amountTotal ?? 0) - order.amountRefunded
-              const refundable = order.status === 'paid' || order.status === 'partially_refunded'
               const awaiting = awaitingOrderId === order.id
-
               return (
                 <li key={order.id} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex flex-wrap items-baseline gap-x-3 text-sm">
-                      <span className="amount font-medium text-ink">
-                        {formatMoney(order.amountTotal, order.currency)}
-                      </span>
-                      {order.amountRefunded > 0 ? (
-                        <span className="amount text-ink-soft">
-                          {formatMoney(order.amountRefunded, order.currency)} refunded
-                        </span>
-                      ) : null}
-                      <span className="text-ink-soft">
-                        <LocalTime iso={order.createdAt} />
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {awaiting ? (
-                        <span className="flex items-center gap-1.5 text-xs text-ink-soft">
-                          <Spinner />
-                          Waiting for webhook
-                        </span>
-                      ) : null}
-                      <OrderStatusBadge status={order.status} />
-                    </div>
-                  </div>
-
-                  {order.status === 'pending' ? (
-                    <p className="m-0 text-sm text-ink-soft">
-                      No payment yet. If checkout was abandoned, Stripe expires the session after 24
-                      hours and this order closes.
-                    </p>
-                  ) : null}
+                  <OrderHeading order={order} awaiting={awaiting} />
 
                   {order.licenses.map((license) => (
                     <LicenseRow
@@ -129,84 +95,25 @@ export default function LicenseOrders({
                     />
                   ))}
 
-                  {refundable || order.status === 'disputed' ? (
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs font-medium text-ink-soft">As the seller:</span>
-                      {refundable && remaining > PARTIAL_REFUND ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={busy !== null || awaiting}
-                          onClick={() =>
-                            run(
-                              order.id,
-                              () =>
-                                refundLicenseOrder({
-                                  data: { orderId: order.id, amount: PARTIAL_REFUND },
-                                }),
-                              () => onAction(order.id),
-                            )
-                          }
-                        >
-                          Refund {formatMoney(PARTIAL_REFUND, order.currency)}
-                        </Button>
-                      ) : null}
-                      {refundable ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={busy !== null || awaiting}
-                          onClick={() =>
-                            run(
-                              order.id,
-                              () => refundLicenseOrder({ data: { orderId: order.id } }),
-                              () => onAction(order.id),
-                            )
-                          }
-                        >
-                          {order.amountRefunded > 0 ? 'Refund the rest' : 'Refund in full'}
-                        </Button>
-                      ) : null}
-                      {order.status === 'disputed' ? (
-                        <>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={busy !== null || awaiting}
-                            onClick={() =>
-                              run(
-                                order.id,
-                                () =>
-                                  resolveLicenseDispute({
-                                    data: { orderId: order.id, outcome: 'won' },
-                                  }),
-                                () => onAction(order.id),
-                              )
-                            }
-                          >
-                            Win the dispute
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={busy !== null || awaiting}
-                            onClick={() =>
-                              run(
-                                order.id,
-                                () =>
-                                  resolveLicenseDispute({
-                                    data: { orderId: order.id, outcome: 'lost' },
-                                  }),
-                                () => onAction(order.id),
-                              )
-                            }
-                          >
-                            Lose the dispute
-                          </Button>
-                        </>
-                      ) : null}
-                    </div>
-                  ) : null}
+                  <SellerActions
+                    order={order}
+                    partialRefund={PARTIAL_REFUND}
+                    disabled={busy !== null || awaiting}
+                    onRefund={(amount) =>
+                      run(
+                        order.id,
+                        () => refundLicenseOrder({ data: { orderId: order.id, amount } }),
+                        () => onAction(order.id),
+                      )
+                    }
+                    onResolveDispute={(outcome) =>
+                      run(
+                        order.id,
+                        () => resolveLicenseDispute({ data: { orderId: order.id, outcome } }),
+                        () => onAction(order.id),
+                      )
+                    }
+                  />
                 </li>
               )
             })}

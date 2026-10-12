@@ -4,6 +4,7 @@ import type { DbTransaction } from '#/db/index'
 import { db } from '#/db/index'
 import type { PayCheckoutSession, PayOrder } from '#/db/pay-schema'
 import { payOrderItems, payOrders } from '#/db/pay-schema'
+import type { LabModuleSlug } from '#/lib/lab/modules'
 import type { LabCheckoutOptions } from '#/lib/stripe/checkout.server'
 import { createLabCheckoutSession } from '#/lib/stripe/checkout.server'
 import { getStripe } from '#/lib/stripe/client.server'
@@ -50,6 +51,25 @@ export async function startOrderCheckout(
       .where(eq(payOrders.id, order.id))
     throw error
   }
+}
+
+/** An order from this module that belongs to this user. Throws otherwise, so seller actions stay scoped. */
+export async function findOwnOrder(
+  clerkUserId: string,
+  module: LabModuleSlug,
+  orderId: string,
+): Promise<PayOrder> {
+  const order = await db.query.payOrders.findFirst({
+    where: and(
+      eq(payOrders.id, orderId),
+      eq(payOrders.clerkUserId, clerkUserId),
+      eq(payOrders.module, module),
+    ),
+  })
+  if (!order) {
+    throw new Error('Order not found.')
+  }
+  return order
 }
 
 function idOf(value: string | { id: string } | null | undefined): string | null {

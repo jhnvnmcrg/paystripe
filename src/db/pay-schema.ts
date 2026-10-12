@@ -147,3 +147,39 @@ export const payLicenseActivations = pgTable(
 )
 
 export type PayLicenseKey = typeof payLicenseKeys.$inferSelect
+
+/* Step 2: digital downloads */
+
+export const downloadGrantStatuses = ['active', 'suspended', 'revoked'] as const
+
+/**
+ * The right to download one asset from a paid order, a limited number of times.
+ * Created by the webhook. Download links are signed separately and expire.
+ */
+export const payDownloadGrants = pgTable(
+  'pay_download_grants',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orderId: uuid('order_id')
+      .notNull()
+      .references(() => payOrders.id, { onDelete: 'cascade' }),
+    clerkUserId: text('clerk_user_id').notNull(),
+    /** The asset's ID in the downloads catalog, which maps to the file on disk. */
+    assetId: text('asset_id').notNull(),
+    productName: text('product_name').notNull(),
+    fileName: text('file_name').notNull(),
+    maxDownloads: integer('max_downloads').notNull(),
+    downloadsUsed: integer('downloads_used').notNull().default(0),
+    status: text('status', { enum: downloadGrantStatuses }).notNull().default('active'),
+    statusReason: text('status_reason'),
+    lastDownloadedAt: timestamp('last_downloaded_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('pay_download_grants_user_idx').on(table.clerkUserId),
+    uniqueIndex('pay_download_grants_order_asset_idx').on(table.orderId, table.assetId),
+  ],
+)
+
+export type PayDownloadGrant = typeof payDownloadGrants.$inferSelect
